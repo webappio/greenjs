@@ -1,0 +1,14 @@
+{
+  "name": "framework.webapp.io",
+  "version": "1.0.0",
+  "description": "Blazingly-fast site generator for React",
+  "main": "main.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
