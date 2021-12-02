@@ -17,7 +17,7 @@ const Page = ({path}) => {
 const Hello = () => {
 	return <div>
 		<Helmet>
-			<title>framework.webapp.io app</title>
+			<title>framework.webapp.io app!</title>
 			<meta charSet="utf-8"/>
 			<meta name="cache-control" content="public" />
 		</Helmet>

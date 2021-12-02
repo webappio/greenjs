@@ -1,5 +1,5 @@
 {
-  "name": "framework.webapp.io",
+  "name": "greenjs",
   "version": "1.0.0",
   "description": "Blazingly-fast site generator for React",
   "main": "main.js",

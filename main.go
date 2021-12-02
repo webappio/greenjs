@@ -1,39 +1,31 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"github.com/webappio/greenjs/go/cmd"
 	"os"
-
-	"github.com/evanw/esbuild/pkg/api"
 )
 
+func printUsage() {
+	fmt.Fprintf(os.Stderr, "usage: %v [build|start]", os.Args[0])
+	os.Exit(1)
+}
+
 func main() {
-	result := api.Build(api.BuildOptions{
-		EntryPoints: []string{"examples/hello-world-react/App.js"},
-		Outdir:     "examples/hello-world-react/dist/bundles",
-		Bundle:      true,
-		Write:       true,
-		Splitting:   true,
-		Format:      api.FormatESModule,
-		//MinifyIdentifiers: true,
-		//MinifySyntax:      true,
-		//MinifyWhitespace:  true,
-		LogLevel: api.LogLevelInfo,
-		Loader: map[string]api.Loader{
-			".jsx": api.LoaderJSX,
-			".js":  api.LoaderJSX,
-		},
-		Define: map[string]string{"window.DoHydrate": "false"},
-		Watch: &api.WatchMode{
-			OnRebuild: func(result api.BuildResult) {
-				fmt.Println("rebuilt")
-			},
-		},
-	})
-
-	<-make(chan interface{})
-
-	if len(result.Errors) > 0 {
-		os.Exit(1)
+	flag.Parse()
+	if len(os.Args) < 2 {
+		printUsage()
 	}
+
+	switch os.Args[1] {
+	case "build":
+		cmd.Build()
+	case "start":
+		cmd.Start()
+	default:
+		printUsage()
+	}
+
+
 }
