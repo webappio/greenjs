@@ -15,7 +15,6 @@ func NewHTTPServer(indexHTML []byte) http.Handler {
 	mux.HandleFunc("/bundles/", func(writer http.ResponseWriter, request *http.Request) {
 		base := "dist"
 		path := filepath.Clean(base + request.URL.Path)
-		fmt.Println(path)
 		if !strings.HasPrefix(path, base+"/bundles/") {
 			writer.WriteHeader(http.StatusBadRequest)
 			writer.Write([]byte("error: " + "bad path: " + request.URL.Path))

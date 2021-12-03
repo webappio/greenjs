@@ -52,7 +52,7 @@ const Router = ({children}) => {
 const Route = ({path, exact, asyncPage, children}) => {
     if (asyncPage) {
         const E = React.lazy(asyncPage);
-        return <React.Suspense fallback={<>...</>}>
+        return <React.Suspense fallback={<></>}>
             <E/>
         </React.Suspense>
     }

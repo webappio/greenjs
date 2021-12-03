@@ -5,8 +5,10 @@ import (
 	"github.com/chromedp/chromedp"
 	"github.com/pkg/errors"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 )
@@ -17,8 +19,14 @@ type Prerenderer struct {
 }
 
 func (p *Prerenderer) RenderAll() error {
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+	err := chromedp.Run(ctx)
+	if err != nil {
+		return errors.Wrap(err, "could not create a browser")
+	}
 	p.pagesVisited.Store("/", true)
-	err := p.RenderToFile("/", "dist/index.html")
+	err = p.RenderToFile(ctx, "/", "dist/index.html")
 	if err != nil {
 		return err
 	}
@@ -30,7 +38,7 @@ func (p *Prerenderer) RenderAll() error {
 			wg.Add(1)
 			anyVisited = true
 			go func() {
-				renderErr := p.RenderToFile(pagePath.(string), "dist/"+pagePath.(string)+".html")
+				renderErr := p.RenderToFile(ctx, pagePath.(string), "dist/"+strings.Trim(pagePath.(string), "/")+".html")
 				if renderErr != nil {
 					err = renderErr
 				}
@@ -47,7 +55,8 @@ func (p *Prerenderer) RenderAll() error {
 	return nil
 }
 
-func (p *Prerenderer) RenderToFile(pagePath, fileName string) error {
+func (p *Prerenderer) RenderToFile(ctx context.Context, pagePath, fileName string) error {
+	log.Print("Rendering html for ", fileName)
 	err := os.MkdirAll(filepath.Dir(fileName), 0o755)
 	if err != nil {
 		return errors.Wrapf(err, "could not make directories for %v", fileName)
@@ -57,7 +66,7 @@ func (p *Prerenderer) RenderToFile(pagePath, fileName string) error {
 		return errors.Wrapf(err, "could not make file at %v", fileName)
 	}
 
-	pages, err := p.Render(pagePath, destFile)
+	pages, err := p.Render(ctx, pagePath, destFile)
 	if err != nil {
 		return errors.Wrapf(err, "could not render page at %v", pagePath)
 	}
@@ -69,8 +78,8 @@ func (p *Prerenderer) RenderToFile(pagePath, fileName string) error {
 	return nil
 }
 
-func (p *Prerenderer) Render(pagePath string, dest io.Writer) ([]string, error) {
-	ctx, cancel := chromedp.NewContext(context.Background())
+func (p *Prerenderer) Render(ctx context.Context, pagePath string, dest io.Writer) ([]string, error) {
+	ctx, cancel := chromedp.NewContext(ctx)
 	defer cancel()
 
 	var pageContents string

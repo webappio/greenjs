@@ -8,7 +8,7 @@ import (
 )
 
 func printUsage() {
-	fmt.Fprintf(os.Stderr, "usage: %v [build|start]", os.Args[0])
+	fmt.Fprintf(os.Stderr, "usage: %v [build|start]\n", os.Args[0])
 	os.Exit(1)
 }
 
@@ -26,6 +26,4 @@ func main() {
 	default:
 		printUsage()
 	}
-
-
 }
