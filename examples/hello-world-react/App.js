@@ -3,9 +3,6 @@ import ReactDOM from "react-dom";
 import {Helmet} from "react-helmet";
 import {Route, Router} from "./router";
 
-import Pricing from "./pages/pricing"
-import Index from "./pages/index"
-
 const Hello = () => {
 	return <div>
 		<Helmet>
@@ -14,12 +11,8 @@ const Hello = () => {
 			<meta name="cache-control" content="public" />
 		</Helmet>
 		<Router>
-			<Route path="/pricing" exact>
-				<Pricing />
-			</Route>
-			<Route path="/">
-				<Index />
-			</Route>
+			<Route path="/pricing" exact asyncPage={() => import("./pages/pricing")} />
+			<Route path="/" asyncPage={() => import("./pages/index")} />
 		</Router>
 	</div>
 }

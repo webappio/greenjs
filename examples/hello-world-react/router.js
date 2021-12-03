@@ -42,7 +42,6 @@ const Router = ({children}) => {
             }
         }
         window._GreenJSRoutes = {...(window._GreenJSRoutes ?? {}), [route.props.path]: true}
-
     }
     return <RouterContext.Provider value={{routeTree: {"hello": "world"}}}>
         {bestMatch}
