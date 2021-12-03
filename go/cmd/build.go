@@ -37,7 +37,6 @@ func Build() {
 			".jsx": api.LoaderJSX,
 			".js":  api.LoaderJSX,
 		},
-		Define: map[string]string{"window.DoHydrate": "true"},
 	})
 
 	if len(result.Errors) > 0 {
@@ -52,19 +51,7 @@ func Build() {
 		}
 	}()
 
-	destHtmlFile, err := os.OpenFile(filepath.Join(distDir, "index.html"), os.O_WRONLY|os.O_CREATE, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer destHtmlFile.Close()
-	(&Prerenderer{}).Render("http://localhost:8000", destHtmlFile)
-
-	destHtmlFile, err = os.OpenFile(filepath.Join(distDir, "pricing"), os.O_WRONLY|os.O_CREATE, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer destHtmlFile.Close()
-	(&Prerenderer{}).Render("http://localhost:8000/pricing", destHtmlFile)
+	(&Prerenderer{}).RenderAll()
 
 	server.Shutdown(context.Background())
 }

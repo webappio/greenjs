@@ -26,7 +26,6 @@ func Start() {
 			".jsx": api.LoaderJSX,
 			".js":  api.LoaderJSX,
 		},
-		Define: map[string]string{"window.DoHydrate": "false"},
 		Watch: &api.WatchMode{
 			OnRebuild: func(result api.BuildResult) {
 				fmt.Println("rebuilt")

@@ -1,18 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {Helmet} from "react-helmet";
-import {
-	BrowserRouter as Router,
-	Routes,
-	Route,
-} from "react-router-dom";
-
-const Page = ({path}) => {
-	const E = React.lazy(path);
-	return <React.Suspense fallback={<>...</>}>
-		<E/>
-	</React.Suspense>
-}
+import {Route, Router} from "./router";
 
 const Hello = () => {
 	return <div>
@@ -22,15 +11,13 @@ const Hello = () => {
 			<meta name="cache-control" content="public" />
 		</Helmet>
 		<Router>
-			<Routes>
-				<Route path="/pricing" exact element={<Page path={() => import("./pages/pricing")}/>} />
-				<Route path="/" element={<Page path={() => import("./pages/index")}/>} />
-			</Routes>
+			<Route path="/pricing" exact asyncPage={() => import("./pages/pricing")} />
+			<Route path="/" asyncPage={() => import("./pages/index")} />
 		</Router>
 	</div>
 }
 
-(window.DoHydrate ? ReactDOM.hydrate : ReactDOM.render)(
+ReactDOM.hydrate(
 	<Hello />,
 	document.getElementById("react-root")
 );
