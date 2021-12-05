@@ -1,18 +1,16 @@
 package cmd
 
 import (
-	"context"
+	"fmt"
 	"github.com/evanw/esbuild/pkg/api"
-	"github.com/webappio/greenjs/go/httpserver"
-	"github.com/webappio/greenjs/go/resources"
 	"io/ioutil"
 	"log"
-	"net/http"
+	"net"
 	"os"
 	"path/filepath"
 )
 
-func Build() {
+func Build(args []string) {
 	distDir := "dist"
 	content, _ := ioutil.ReadDir(distDir)
 	for _, file := range content {
@@ -22,36 +20,32 @@ func Build() {
 		}
 	}
 	os.MkdirAll(distDir, 0o750)
-	result := api.Build(api.BuildOptions{
-		EntryPoints: []string{"App.js"},
-		Outdir:      filepath.Join(distDir, "bundles"),
-		Bundle:      true,
-		Write:       true,
-		Splitting:   true,
-		Format:      api.FormatESModule,
-		MinifyIdentifiers: true,
-		MinifySyntax:      true,
-		MinifyWhitespace:  true,
-		LogLevel: api.LogLevelInfo,
-		Loader: map[string]api.Loader{
-			".jsx": api.LoaderJSX,
-			".js":  api.LoaderJSX,
-		},
-	})
+	buildOpts := DefaultBuildOptions
+	buildOpts.MinifyWhitespace = true
+	buildOpts.MinifySyntax = true
+	buildOpts.MinifyIdentifiers = true
+	result := api.Build(buildOpts)
 
 	if len(result.Errors) > 0 {
 		os.Exit(1)
 	}
 
-	server := &http.Server{Addr: ":8000", Handler: httpserver.NewHTTPServer(resources.IndexHTML)}
+	listener, err := net.Listen("tcp", "127.0.0.1:")
+	if err != nil {
+		log.Fatal(err)
+	}
+	server := &GreenJsServer{}
 	go func() {
-		err := server.ListenAndServe()
-		if err != nil && err != http.ErrServerClosed{
+		err := server.Serve(listener)
+		if err != nil {
 			log.Fatal(err)
 		}
 	}()
 
-	(&Prerenderer{}).RenderAll()
+	defer server.Stop()
 
-	server.Shutdown(context.Background())
+	err = (&Prerenderer{URI: "http://127.0.0.1:"+fmt.Sprint(listener.Addr().(*net.TCPAddr).Port)}).RenderAll()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

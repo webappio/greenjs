@@ -13,16 +13,17 @@ func printUsage() {
 }
 
 func main() {
-	flag.Parse()
-	if len(os.Args) < 2 {
+	flags := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+	flags.Usage = printUsage
+	flags.Parse(os.Args[1:])
+	if flags.NArg() < 1 {
 		printUsage()
 	}
-
-	switch os.Args[1] {
+	switch flags.Arg(0) {
 	case "build":
-		cmd.Build()
+		cmd.Build(flags.Args()[1:])
 	case "start":
-		cmd.Start()
+		cmd.Start(flags.Args()[1:])
 	default:
 		printUsage()
 	}

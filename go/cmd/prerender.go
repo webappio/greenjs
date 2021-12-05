@@ -14,6 +14,8 @@ import (
 )
 
 type Prerenderer struct {
+	URI string
+
 	pagesToVisit sync.Map
 	pagesVisited sync.Map
 }
@@ -87,10 +89,10 @@ func (p *Prerenderer) Render(ctx context.Context, pagePath string, dest io.Write
 
 	err := chromedp.Run(
 		ctx,
-		chromedp.Navigate("http://localhost:8000"+pagePath),
+		chromedp.Navigate(p.URI+pagePath),
 		chromedp.Sleep(time.Second),
 		chromedp.OuterHTML("html", &pageContents, chromedp.ByQuery),
-		chromedp.Evaluate("Object.keys(window._GreenJSRoutes)", &routes),
+		chromedp.Evaluate("Object.keys(window._GreenJSRoutes || {})", &routes),
 	)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not generate page at %v", pagePath)

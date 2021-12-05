@@ -1,43 +1,33 @@
 package cmd
 
 import (
-	"fmt"
-	"github.com/evanw/esbuild/pkg/api"
-	"github.com/webappio/greenjs/go/httpserver"
-	"github.com/webappio/greenjs/go/resources"
+	"flag"
+	"github.com/pkg/errors"
 	"log"
-	"net/http"
+	"net"
+	"os"
 )
 
-func Start() {
-	go func() {
-		log.Fatal(http.ListenAndServe(":8000", httpserver.NewHTTPServer(resources.IndexHTML)))
-	}()
+var errNotFound = errors.New("not found")
 
-	result := api.Build(api.BuildOptions{
-		EntryPoints: []string{"App.js"},
-		Outdir:      "dist/bundles",
-		Bundle:      true,
-		Write:       true,
-		Splitting:   true,
-		Format:      api.FormatESModule,
-		LogLevel: api.LogLevelInfo,
-		Loader: map[string]api.Loader{
-			".jsx": api.LoaderJSX,
-			".js":  api.LoaderJSX,
-		},
-		Watch: &api.WatchMode{
-			OnRebuild: func(result api.BuildResult) {
-				fmt.Println("rebuilt")
-			},
-		},
-	})
-	for _, err := range result.Errors {
-		log.Println(err.Text)
-		log.Println(err.Location.File, ":", err.Location.Line)
-		log.Println(err.Detail)
-		log.Println()
+func Start(args []string) {
+	flags := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+
+	var listenAddr string
+	flags.StringVar(&listenAddr, "l", "127.0.0.1:8000", "the address to listen on (e.g., 0.0.0.0:8000)")
+	flags.StringVar(&listenAddr, "listen-addr", "127.0.0.1:8000", "the address to listen on (e.g., 0.0.0.0:8000)")
+
+	var upstreamAddr string
+	flags.StringVar(&upstreamAddr, "u", "", "the upstream server to forward requests to (e.g., localhost:8080)")
+	flags.StringVar(&upstreamAddr, "upstream-addr", "", "the upstream server to forward requests to (e.g., localhost:8080)")
+	flags.Parse(args)
+
+	listener, err := net.Listen("tcp", listenAddr)
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	<-make(chan interface{})
+	err = (&GreenJsServer{UpstreamHost:      upstreamAddr}).Serve(listener)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
