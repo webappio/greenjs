@@ -26,7 +26,9 @@ func Start(args []string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = (&GreenJsServer{UpstreamHost:      upstreamAddr}).Serve(listener)
+	err = (&GreenJsServer{
+		UpstreamHost: upstreamAddr,
+	}).Serve(listener)
 	if err != nil {
 		log.Fatal(err)
 	}

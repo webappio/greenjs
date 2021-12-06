@@ -57,6 +57,10 @@ func (p *Prerenderer) RenderAll() error {
 	return nil
 }
 
+func (p *Prerenderer) GetPagesVisited() *sync.Map {
+	return &p.pagesVisited
+}
+
 func (p *Prerenderer) RenderToFile(ctx context.Context, pagePath, fileName string) error {
 	log.Print("Rendering html for ", fileName)
 	err := os.MkdirAll(filepath.Dir(fileName), 0o755)

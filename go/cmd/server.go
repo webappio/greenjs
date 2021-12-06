@@ -15,6 +15,7 @@ import (
 type GreenJsServer struct {
 	UpstreamHost string
 	BuildOpts *api.BuildOptions
+	PageIsRoute func(string) bool
 
 	server *http.Server
 
@@ -86,7 +87,11 @@ func (srv *GreenJsServer) Stop() {
 }
 
 func (srv *GreenJsServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	if req.URL.Path == "/" {
+	isIndex := req.URL.Path == "/"
+	if srv.PageIsRoute != nil {
+		isIndex = isIndex || srv.PageIsRoute(req.URL.Path)
+	}
+	if isIndex {
 		rw.Header().Set("Content-Type", "text/html")
 		rw.Write(resources.IndexHTML)
 		return
