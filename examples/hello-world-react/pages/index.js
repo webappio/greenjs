@@ -1,5 +1,5 @@
 import React from "react";
-import {Link} from "../router";
+import {Link} from "@greenio/router";
 
 const Index = () => {
     return <div>

@@ -1,7 +1,9 @@
+'use strict';
+
 import React from "react";
 import ReactDOM from "react-dom";
-import {Head} from "./Head";
-import {Route, Router} from "./router";
+import {Head} from "@greenio/head";
+import {Route, Router} from "@greenio/router";
 
 const Hello = () => {
 	return <div>

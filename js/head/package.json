@@ -1,0 +1,32 @@
+{
+  "name": "@greenio/head",
+  "version": "0.0.1",
+  "description": "Embed your <head> tag directly into your React code",
+  "main": "Head.js",
+  "private": false,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webappio/greenjs.git"
+  },
+  "keywords": [
+    "head",
+    "meta",
+    "title",
+    "react",
+    "react-helmet",
+    "greenjs"
+  ],
+  "author": "The GreenJS Authors",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/webappio/greenjs/issues"
+  },
+  "homepage": "https://github.com/webappio/greenjs#readme",
+  "peerDependencies": {
+    "react": ">=16.8",
+    "react-dom": ">=16.8"
+  }
+}

@@ -1,5 +1,5 @@
 import React from "react";
-import {Head} from "../Head";
+import {Head} from "@greenio/head";
 
 const Pricing = () => {
     return <div>
