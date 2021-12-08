@@ -1,12 +1,12 @@
 import React from "react";
-import {Helmet} from "react-helmet";
+import {Head} from "../Head";
 
 const Pricing = () => {
     return <div>
-        <Helmet>
+        <Head>
             <title>Pricing page</title>
             <meta name="description" content="Great description for pricing"/>
-        </Helmet>
+        </Head>
         <h1>Pricing!</h1>
     </div>
 }
