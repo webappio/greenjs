@@ -5,6 +5,9 @@ const RouterContext = React.createContext({
 });
 
 const Router = ({children}) => {
+    if (typeof children === "object" && children?.props?.path) {
+        children = [children];
+    }
     if (typeof children !== "object" || !children.length) {
         throw new Error("Invalid Router children, expected a list of Route")
     }
