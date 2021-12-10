@@ -20,7 +20,7 @@ const Hello = () => {
 }
 
 
-ReactDOM.hydrate(
+(GreenJsHydrating ? ReactDOM.hydrate : ReactDOM.render)(
 	<Hello />,
 	document.getElementById("react-root")
 );

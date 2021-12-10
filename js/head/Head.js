@@ -65,7 +65,15 @@ class headState {
                 domElement.innerText = innerText;
             }
             for(let attr of Object.keys(attrs ?? {})) {
-                domElement.setAttribute(attr, attrs[attr]);
+                if(typeof attr === "boolean") {
+                    if(attr) {
+                        domElement.setAttribute(attr, "");
+                    }
+                } else if(typeof attr === "string") {
+                    domElement.setAttribute(attr, attrs[attr]);
+                } else {
+                    throw new Error("Invalid contents for Head tag element attribute: "+key+"="+attrs[key]);
+                }
             }
             domElement.setAttribute("gjs", '');
             document.head.appendChild(domElement);
@@ -106,11 +114,6 @@ const Head = ({children}) => {
                 }
                 element.innerText = children;
             }
-            Object.values(attrs).forEach(attrVal => {
-                if(typeof attrVal !== "string") {
-                    throw new Error("Invalid contents for Head tag element attribute: "+attrVal);
-                }
-            })
             element.attrs = {...attrs};
             return element;
         });

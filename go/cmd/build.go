@@ -17,6 +17,7 @@ func Build(args []string) {
 	buildOpts.MinifyWhitespace = true
 	buildOpts.MinifySyntax = true
 	buildOpts.MinifyIdentifiers = true
+	buildOpts.Define["GreenJsHydrating"] = "true"
 	result := api.Build(buildOpts)
 
 	if len(result.Errors) > 0 {

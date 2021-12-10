@@ -10,6 +10,9 @@ var DefaultBuildOptions = api.BuildOptions{
 	Splitting:   true,
 	Format:      api.FormatESModule,
 	LogLevel:    api.LogLevelInfo,
+	Define: map[string]string{
+		"GreenJsHydrating": "false",
+	},
 	Loader: map[string]api.Loader{
 		".jsx":  api.LoaderJSX,
 		".js":   api.LoaderJSX,
