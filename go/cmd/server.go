@@ -21,6 +21,7 @@ type GreenJsServer struct {
 
 	buildServerHost string
 	stopBuildServer func ()
+	stopped bool
 
 	reverseProxy *httputil.ReverseProxy
 }
@@ -62,22 +63,17 @@ func (srv *GreenJsServer) Serve(listener net.Listener) error {
 	}
 
 	server := http.Server{Handler: srv}
-	done := make(chan interface{})
-	defer close(done)
-	go func() {
-		err = server.Serve(listener)
-		close(done)
-	}()
-	go func() {
-		err = result.Wait()
-		close(done)
-	}()
-	<-done
-	srv.Stop()
+	err = server.Serve(listener)
+	if srv.stopped {
+		err = nil
+	} else {
+		srv.Stop()
+	}
 	return err
 }
 
 func (srv *GreenJsServer) Stop() {
+	srv.stopped = true
 	if srv.stopBuildServer != nil {
 		srv.stopBuildServer()
 	}

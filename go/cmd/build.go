@@ -9,6 +9,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"sync"
 )
 
 func Build(args []string) {
@@ -18,36 +19,68 @@ func Build(args []string) {
 	buildOpts.MinifySyntax = true
 	buildOpts.MinifyIdentifiers = true
 	buildOpts.Define["GreenJsHydrating"] = "true"
-	result := api.Build(buildOpts)
 
-	if len(result.Errors) > 0 {
-		os.Exit(1)
-	}
+	prerenderer := &Prerenderer{}
+	var greenJsServer *GreenJsServer
+	var listener net.Listener
 
-	listener, err := net.Listen("tcp", "127.0.0.1:")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	prerenderer := &Prerenderer{
-		URI: "http://127.0.0.1:"+fmt.Sprint(listener.Addr().(*net.TCPAddr).Port),
-	}
-
-	server := &GreenJsServer{PageIsRoute: func(s string) bool {
-		_, ok := prerenderer.pagesVisited.Load(s)
-		return ok
-	}}
-
+	wg := sync.WaitGroup{}
+	wg.Add(1)
 	go func() {
-		err := server.Serve(listener)
+		var err error
+		listener, err = net.Listen("tcp", "127.0.0.1:")
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		prerenderer.URI = "http://127.0.0.1:" + fmt.Sprint(listener.Addr().(*net.TCPAddr).Port)
+		greenJsServer = &GreenJsServer{PageIsRoute: func(s string) bool {
+			_, ok := prerenderer.pagesVisited.Load(s)
+			return ok
+		}}
+
+		go func() {
+			err := greenJsServer.Serve(listener)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}()
+
+		wg.Done()
+		log.Println("Started server!")
 	}()
 
-	defer server.Stop()
+	wg.Add(1)
+	go func() {
+		err := prerenderer.Start()
+		if err != nil {
+			log.Fatal(err)
+		}
+		wg.Done()
+		log.Println("Started prerenderer!")
+	}()
 
-	err = prerenderer.RenderAll()
+	wg.Add(1)
+	go func() {
+		result := api.Build(buildOpts)
+
+		if len(result.Errors) > 0 {
+			for _, err := range result.Errors {
+				log.Println(fmt.Sprintf("%v:%v %v", err.Location.File, err.Location.Line, err.Text))
+			}
+			os.Exit(1)
+		}
+		wg.Done()
+		log.Println("Built!")
+	}()
+
+	wg.Wait()
+	defer listener.Close()
+	defer prerenderer.Cancel()
+	defer greenJsServer.Stop()
+
+	log.Println("Rendering pages...")
+	err := prerenderer.RenderAll()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -58,7 +91,7 @@ func Build(args []string) {
 		return true
 	})
 
-	marshalledPages, err := json.MarshalIndent(pagesVisitedList,  "", "  ")
+	marshalledPages, err := json.MarshalIndent(pagesVisitedList, "", "  ")
 	if err != nil {
 		log.Fatal(err)
 	}

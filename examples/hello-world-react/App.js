@@ -1,7 +1,7 @@
 'use strict';
 
 import React from "react";
-import ReactDOM from "react-dom";
+import {Render} from "@greenio/react";
 import {Head} from "@greenio/head";
 import {Route, Router} from "@greenio/router";
 
@@ -19,8 +19,4 @@ const Hello = () => {
 	</div>
 }
 
-
-(GreenJsHydrating ? ReactDOM.hydrate : ReactDOM.render)(
-	<Hello />,
-	document.getElementById("react-root")
-);
+Render(<Hello />);

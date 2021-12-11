@@ -10,25 +10,35 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
-	"time"
 )
 
 type Prerenderer struct {
 	URI string
 
+	browserCtx context.Context
+	cancel context.CancelFunc
 	pagesToVisit sync.Map
 	pagesVisited sync.Map
 }
 
-func (p *Prerenderer) RenderAll() error {
-	ctx, cancel := chromedp.NewContext(context.Background())
-	defer cancel()
-	err := chromedp.Run(ctx)
+func (p *Prerenderer) Start() error {
+	p.browserCtx, p.cancel = chromedp.NewContext(context.Background())
+	err := chromedp.Run(p.browserCtx)
 	if err != nil {
 		return errors.Wrap(err, "could not create a browser")
 	}
+	return nil
+}
+
+func (p *Prerenderer) Cancel() {
+	if p.cancel != nil {
+		p.cancel()
+	}
+}
+
+func (p *Prerenderer) RenderAll() error {
 	p.pagesVisited.Store("/", true)
-	err = p.RenderToFile(ctx, "/", "dist/index.html")
+	err := p.RenderToFile(p.browserCtx, "/", "dist/index.html")
 	if err != nil {
 		return err
 	}
@@ -40,7 +50,7 @@ func (p *Prerenderer) RenderAll() error {
 			wg.Add(1)
 			anyVisited = true
 			go func() {
-				renderErr := p.RenderToFile(ctx, pagePath.(string), "dist/"+strings.Trim(pagePath.(string), "/")+".html")
+				renderErr := p.RenderToFile(p.browserCtx, pagePath.(string), "dist/"+strings.Trim(pagePath.(string), "/")+".html")
 				if renderErr != nil {
 					err = renderErr
 				}
@@ -94,7 +104,6 @@ func (p *Prerenderer) Render(ctx context.Context, pagePath string, dest io.Write
 	err := chromedp.Run(
 		ctx,
 		chromedp.Navigate(p.URI+pagePath),
-		chromedp.Sleep(time.Second),
 		chromedp.OuterHTML("html", &pageContents, chromedp.ByQuery),
 		chromedp.Evaluate("Object.keys(window._GreenJSRoutes || {})", &routes),
 	)
