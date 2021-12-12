@@ -9,7 +9,6 @@ const Hello = () => {
 	return <div>
 		<Head>
 			<title>greenjs app!</title>
-			<meta charSet="utf-8"/>
 			<meta name="cache-control" content="public" />
 		</Head>
 		<Router>

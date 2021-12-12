@@ -18,11 +18,9 @@ class headState {
         let namedMetaElements = {}; //keyed by <meta name=...>
         let otherElements = []; //usually <meta charset=...>
 
-        for(let headElement of document.head.children) {
-            if(headElement.hasAttribute("gjs")) {
-                document.head.removeChild(headElement);
-            }
-        }
+        [...document.head.children]
+            .filter(x => x.hasAttribute("gjs"))
+            .forEach(x => document.head.removeChild(x));
 
         let keys = Object.keys(this.tags);
         keys.sort((a, b) => +a - +b);
@@ -57,8 +55,8 @@ class headState {
         if(titleElement) {
             elements.push(titleElement);
         }
-        elements.concat(Object.values(namedMetaElements));
-        elements.concat(otherElements);
+        elements.push(...Object.values(namedMetaElements));
+        elements.push(...otherElements);
         for(let {type, attrs, innerText} of elements) {
             const domElement = document.createElement(type);
             if(innerText) {
