@@ -96,12 +96,16 @@ const Head = ({children}) => {
         if(!children || !tag) {
             return;
         }
-
-        if(typeof children.length !== "number") {
-            throw new Error("Invalid contents for Head tag, expected list of elements")
+        let childrenList = [];
+        if(typeof children.length === "number") {
+            childrenList = [...children];
+        } else if(typeof children.props !== "undefined") {
+            childrenList = [children];
+        } else {
+            throw new Error("Invalid contents for Head tag, expected list of elements, got "+children);
         }
 
-        window._gjsHeadState.tags[tag] = [...children].map(({type, props: {children, ...attrs}}) => {
+        window._gjsHeadState.tags[tag] = childrenList.map(({type, props: {children, ...attrs}}) => {
             if(typeof type !== "string") {
                 throw new Error("Invalid contents for Head tag, all components must be simple html")
             }
