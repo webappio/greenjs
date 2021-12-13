@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/chromedp/chromedp"
 	"github.com/pkg/errors"
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -38,7 +37,7 @@ func (p *Prerenderer) Cancel() {
 
 func (p *Prerenderer) RenderAll() error {
 	p.pagesVisited.Store("/", true)
-	err := p.RenderToFile(p.browserCtx, "/", "dist/index.html")
+	err := p.RenderToFile(p.browserCtx, "/", "dist/index")
 	if err != nil {
 		return err
 	}
@@ -50,7 +49,7 @@ func (p *Prerenderer) RenderAll() error {
 			wg.Add(1)
 			anyVisited = true
 			go func() {
-				renderErr := p.RenderToFile(p.browserCtx, pagePath.(string), "dist/"+strings.Trim(pagePath.(string), "/")+".html")
+				renderErr := p.RenderToFile(p.browserCtx, pagePath.(string), "dist/"+strings.Trim(pagePath.(string), "/"))
 				if renderErr != nil {
 					err = renderErr
 				}
@@ -71,18 +70,14 @@ func (p *Prerenderer) GetPagesVisited() *sync.Map {
 	return &p.pagesVisited
 }
 
-func (p *Prerenderer) RenderToFile(ctx context.Context, pagePath, fileName string) error {
-	log.Print("Rendering html for ", fileName)
-	err := os.MkdirAll(filepath.Dir(fileName), 0o755)
+func (p *Prerenderer) RenderToFile(ctx context.Context, pagePath, fileBaseName string) error {
+	log.Print("Rendering html for ", fileBaseName)
+	err := os.MkdirAll(filepath.Dir(fileBaseName), 0o755)
 	if err != nil {
-		return errors.Wrapf(err, "could not make directories for %v", fileName)
-	}
-	destFile, err := os.OpenFile(fileName, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
-	if err != nil {
-		return errors.Wrapf(err, "could not make file at %v", fileName)
+		return errors.Wrapf(err, "could not make directories for %v", fileBaseName)
 	}
 
-	pages, err := p.Render(ctx, pagePath, destFile)
+	pages, err := p.Render(ctx, pagePath, fileBaseName)
 	if err != nil {
 		return errors.Wrapf(err, "could not render page at %v", pagePath)
 	}
@@ -94,24 +89,45 @@ func (p *Prerenderer) RenderToFile(ctx context.Context, pagePath, fileName strin
 	return nil
 }
 
-func (p *Prerenderer) Render(ctx context.Context, pagePath string, dest io.Writer) ([]string, error) {
+func (p *Prerenderer) Render(ctx context.Context, pagePath, fileBaseName string) ([]string, error) {
 	ctx, cancel := chromedp.NewContext(ctx)
 	defer cancel()
 
-	var pageContents string
-	var routes []string
+	htmlDestFile, err := os.OpenFile(fileBaseName+".html", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not make file at %v.html", fileBaseName)
+	}
+	defer htmlDestFile.Close()
+	cssDestFile, err := os.OpenFile(fileBaseName+".css", os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
+	if err != nil {
+		return nil, errors.Wrapf(err, "could not make file at %v.css", fileBaseName)
+	}
+	defer cssDestFile.Close()
 
-	err := chromedp.Run(
+	var bodyContents string
+	var routes []string
+	var cssRules string
+	var extraHead string
+
+	err = chromedp.Run(
 		ctx,
 		chromedp.Navigate(p.URI+pagePath),
-		chromedp.OuterHTML("html", &pageContents, chromedp.ByQuery),
+		chromedp.OuterHTML("body", &bodyContents, chromedp.ByQuery),
 		chromedp.Evaluate("Object.keys(window._GreenJSRoutes || {})", &routes),
+		chromedp.Evaluate("[...document.styleSheets].flatMap(x => [...x.cssRules]).map(x => x.cssText).join(' ');", &cssRules),
+		chromedp.Evaluate(`[...document.head.querySelectorAll(":not(script):not(style)")].map(x => x.outerHTML).join("\n")`, &extraHead),
 	)
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not generate page at %v", pagePath)
 	}
 
-	dest.Write([]byte("<!DOCTYPE html>\n"))
-	dest.Write([]byte(pageContents))
+	htmlDestFile.Write([]byte("<!DOCTYPE html>\n<html>\n<head>\n"))
+	if len(cssRules) > 0 {
+		cssDestFile.Write([]byte(cssRules))
+		htmlDestFile.Write([]byte(`<link rel="stylesheet" href="/`+strings.TrimPrefix(fileBaseName, "dist/")+`.css" class="from-greenjs">`+"\n"))
+	}
+	htmlDestFile.Write([]byte(extraHead))
+	htmlDestFile.Write([]byte("\n</head>\n"))
+	htmlDestFile.Write([]byte(bodyContents))
 	return routes, nil
 }

@@ -8,6 +8,7 @@ const Render = (element, callback) => {
         newRoot,
         () => Promise.all(Object.values(window._GreenJSPromises || {})).then(() => {
             document.body.removeChild(document.getElementById("react-root"));
+            document.head.querySelectorAll(".from-greenjs").forEach(x => x.remove());
             document.body.appendChild(newRoot);
             newRoot.id = "react-root";
             if(callback) {
