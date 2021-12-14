@@ -33,8 +33,7 @@ export default function App() {
 import {useRoute} from "@greenio/router";
 export default function DocPage() {
   //params: /docs/:page -> page is a param
-  //query: /docs/head?search=hello -> {"search": "hello"} is the query ({} otherwise)
-  const {params, query} = useRoute();
+  const {params} = useRoute();
   return <div>
     Current doc page is {params.page}, query params are: {Object.keys(query).join(", ")}
     Path is: {params.path}

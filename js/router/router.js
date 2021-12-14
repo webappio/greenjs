@@ -1,31 +1,33 @@
 import React from "react";
 
-const pathMatches = (path, routeDef) => {
+const getPathResult = (path, routeDef) => {
     if(path.charAt(0) !== "/") {
         path = "/" + path;
-    }
-    if(path === routeDef) {
-        return true
     }
 
     const pathSplit = path.split("/");
     const routeSplit = routeDef.split("/");
 
+    const result = {success: false, params: {}};
     for(let i = 0; i < routeSplit.length; i += 1) {
         if(routeSplit[i].charAt(0) === ":") {
+            result.params = {...result.params, [routeSplit[i].substring(1)]: pathSplit[i]};
             //route is of the form /hello/:param/something
         } else if (routeSplit[i].charAt(0) === "*") {
             //route is of the form /hello/*param
-            return true;
+            result.success = true;
+            return result;
         } else if(i >= pathSplit.length || pathSplit[i] !== routeSplit[i]) {
-            return false;
+            result.success = false;
+            return result;
         }
     }
-    return routeSplit.length === pathSplit.length;
+    result.success = routeSplit.length === pathSplit.length;
+    return result;
 }
 
 const RouteContext = React.createContext({
-    routeTree: null,
+    params: {},
 });
 
 const Router = ({children}) => {
@@ -48,19 +50,25 @@ const Router = ({children}) => {
         setPathname(window.location.pathname);
     })
 
-    let bestMatch = null;
+    let bestMatchResult = null;
     for (let route of children) {
         if (!route?.props?.path) {
             throw new Error("Invalid Router child, all children must be Routes with a path")
         }
-        if (pathMatches(pathname, route.props.path)) {
-            if (bestMatch === null) {
-                bestMatch = route;
+        let matchResult = getPathResult(pathname, route.props.path);
+        if (matchResult.success) {
+            if (bestMatchResult === null) {
+                bestMatchResult = {...matchResult, route: route};
             }
         }
         window._GreenJSRoutes = {...(window._GreenJSRoutes ?? {}), [route.props.path]: true}
     }
-    return bestMatch;
+    if(!bestMatchResult) {
+        return null;
+    }
+    return <RouteContext.Provider value={{params: bestMatchResult.params}}>
+        {bestMatchResult.route}
+    </RouteContext.Provider>;
 }
 
 const Route = ({path, exact, asyncPage, children}) => {
@@ -85,4 +93,8 @@ const Link = ({href, to, children}) => {
     }}>{children}</a>
 }
 
-export {Router, Route, Link}
+const useRoute = () => {
+    return React.useContext(RouteContext);
+}
+
+export {Router, Route, Link, useRoute}
