@@ -71,7 +71,7 @@ const Router = ({children}) => {
     </RouteContext.Provider>;
 }
 
-const Route = ({path, exact, asyncPage, children}) => {
+const Route = ({path, asyncPage, children}) => {
     if (asyncPage) {
         const E = React.lazy(asyncPage);
         return <React.Suspense fallback={<></>}>
@@ -81,17 +81,23 @@ const Route = ({path, exact, asyncPage, children}) => {
     return <>{children}</>
 }
 
-const Link = ({href, to, children}) => {
+const Link = React.forwardRef(({href, to, children, ...props}, ref) => {
     if (!href && to) {
         href = to;
     }
-    return <a href={href} onClick={e => {
-        if (!e.ctrlKey) {
+    return <a href={href} {...props} onClick={e => {
+        let modKeyDown = false;
+        if(/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+            modKeyDown = e.metaKey;
+        } else {
+            modKeyDown = e.ctrlKey;
+        }
+        if (!modKeyDown) {
             e.preventDefault();
             history.pushState(null, "", href);
         }
-    }}>{children}</a>
-}
+    }} ref={ref}>{children}</a>
+});
 
 const useRoute = () => {
     return React.useContext(RouteContext);
