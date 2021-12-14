@@ -12,7 +12,8 @@ const Landing = () => {
 		</Head>
 		<h1>Make performant sites with only Javascript</h1>
 		<p>GreenJS turns regular client-side react into performant websites by pre-rendering every page with ESBuild and a headless browser.</p>
-		<Link href="/docs/intro">View docs</Link>
+		<Link href="/docs/intro">View docs<br /></Link>
+		<Link href="/docs/router">router docs</Link>
 	</main>
 }
 
@@ -24,6 +25,7 @@ const Hello = () => {
 		</Head>
 		<Router>
 			<Route path="/docs/intro" exact asyncPage={() => import("./src/topics/00_intro")} />
+			<Route path="/docs/router" exact asyncPage={() => import("./src/topics/05_router")} />
 			<Route path="/"><Landing /></Route>
 		</Router>
 	</div>

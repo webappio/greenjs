@@ -1,6 +1,30 @@
 import React from "react";
 
-const RouterContext = React.createContext({
+const pathMatches = (path, routeDef) => {
+    if(path.charAt(0) !== "/") {
+        path = "/" + path;
+    }
+    if(path === routeDef) {
+        return true
+    }
+
+    const pathSplit = path.split("/");
+    const routeSplit = routeDef.split("/");
+
+    for(let i = 0; i < routeSplit.length; i += 1) {
+        if(routeSplit[i].charAt(0) === ":") {
+            //route is of the form /hello/:param/something
+        } else if (routeSplit[i].charAt(0) === "*") {
+            //route is of the form /hello/*param
+            return true;
+        } else if(i >= pathSplit.length || pathSplit[i] !== routeSplit[i]) {
+            return false;
+        }
+    }
+    return routeSplit.length === pathSplit.length;
+}
+
+const RouteContext = React.createContext({
     routeTree: null,
 });
 
@@ -10,14 +34,6 @@ const Router = ({children}) => {
     }
     if (typeof children !== "object" || !children.length) {
         throw new Error("Invalid Router children, expected a list of Route")
-    }
-
-    let routerExists = false;
-    try {
-        routerExists = React.useContext(RouterContext).routeTree;
-    } catch (e){}
-    if(routerExists) {
-        throw new Error("cannot have nested Routers in greenjs");
     }
 
     const [pathname, setPathname] = React.useState(window.location.pathname);
@@ -37,18 +53,14 @@ const Router = ({children}) => {
         if (!route?.props?.path) {
             throw new Error("Invalid Router child, all children must be Routes with a path")
         }
-        if (pathname.startsWith(route.props.path)) {
+        if (pathMatches(pathname, route.props.path)) {
             if (bestMatch === null) {
-                bestMatch = route;
-            } else if (route.props.path.length > bestMatch.props.path.length) {
                 bestMatch = route;
             }
         }
         window._GreenJSRoutes = {...(window._GreenJSRoutes ?? {}), [route.props.path]: true}
     }
-    return <RouterContext.Provider value={{routeTree: {"hello": "world"}}}>
-        {bestMatch}
-    </RouterContext.Provider>
+    return bestMatch;
 }
 
 const Route = ({path, exact, asyncPage, children}) => {

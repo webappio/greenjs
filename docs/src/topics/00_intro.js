@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from "@greenio/router";
 
-export default function Intro() {
+export default function Page() {
     return <div>
         <h1>Getting started with GreenJS</h1>
         <p>Click an example below to see how to get started with GreenJS for your use-case</p>
