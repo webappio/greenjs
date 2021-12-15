@@ -3,6 +3,7 @@ import AppBar from '@mui/material/AppBar';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import Slide from '@mui/material/Slide';
 import {Link} from "@greenio/router";
+import {Drawer} from "@mui/material";
 
 function HideOnScroll({children}) {
     const slideTrigger = useScrollTrigger({});
@@ -18,17 +19,41 @@ function HideOnScroll({children}) {
     );
 }
 
+const drawerWidth = 240;
+
 function DocBase({children}) {
-    return <div className="flex flex-col">
+    const [drawerOpen, setDrawerOpen] = React.useState(true);
+    return <div className="flex">
         <HideOnScroll>
-            <AppBar color="inherit">
-                <div className="container flex m-6 justify-between">
-                    <Link href="/"><img src="/static/images/Logo.svg" alt="GreenJS logo" width="128" height="64"/></Link>
+            <AppBar color="inherit" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1}}>
+                <div className="container flex mx-6 my-3 justify-between">
+                    <Link href="/"><img src="/static/images/Logo.svg" alt="GreenJS logo" width="96" height="48"/></Link>
+                    <div className="flex text-lg font-bold uppercase">
+                        <input type="text" className="border border-slate-200 rounded-md px-2 grow shrink" placeholder="Search..."/>
+                        <a href="https://join.slack.com/t/greenjs/shared_invite/zt-109by8mrn-p9gbRlSovBXvoM_5VZn31g" className="ml-8 hover:underline">Community</a>
+                    </div>
                 </div>
             </AppBar>
         </HideOnScroll>
-        <div className="p-8">&nbsp;</div>
-        {children}
+        <Drawer
+            sx={{
+                width: drawerWidth,
+                flexShrink: 0,
+                '& .MuiDrawer-paper': {
+                    width: drawerWidth,
+                    boxSizing: 'border-box',
+                },
+            }}
+            variant="persistent"
+            anchor="left"
+            open={drawerOpen}
+        >
+
+        </Drawer>
+        <div className="flex flex-col">
+            <div className="p-6">&nbsp;</div>
+            {children}
+        </div>
     </div>
 }
 
