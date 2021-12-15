@@ -1,5 +1,4 @@
 import React from "react";
-import {Link} from "@greenio/router";
 import {DocBase} from "./common";
 
 export default function Page() {

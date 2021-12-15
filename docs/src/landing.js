@@ -16,7 +16,7 @@ function Navbar() {
 function Footer() {
     return <div className="bg-[#113118] text-white self-stretch p-6 flex justify-center">
         <div className="container flex flex-col">
-            <img src="/static/images/Logo white.svg" alt="GreenJS logo" width="128" height="64"/>
+            <img src="/static/images/Logo-white.svg" alt="GreenJS logo" width="128" height="64"/>
             <div className="my-5 columns-2">
                 <div className="flex flex-col items-start">
                     <h5 className="uppercase text-slate-200">Examples</h5>

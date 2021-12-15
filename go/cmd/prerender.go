@@ -77,13 +77,13 @@ func (p *Prerenderer) RenderToFile(ctx context.Context, pagePath, fileBaseName s
 		return errors.Wrapf(err, "could not make directories for %v", fileBaseName)
 	}
 
-	pages, err := p.Render(ctx, pagePath, fileBaseName)
+	routes, err := p.Render(ctx, pagePath, fileBaseName)
 	if err != nil {
 		return errors.Wrapf(err, "could not render page at %v", pagePath)
 	}
-	for _, page := range pages {
-		if _, seen := p.pagesVisited.LoadOrStore(page, true); !seen {
-			p.pagesToVisit.Store(page, true)
+	for _, route := range routes {
+		if _, seen := p.pagesVisited.LoadOrStore(route, true); !seen {
+			p.pagesToVisit.Store(route, true)
 		}
 	}
 	return nil
