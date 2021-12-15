@@ -5,12 +5,13 @@ import {Render} from "@greenio/react";
 import {Head} from "@greenio/head";
 import {Route, Router} from "@greenio/router";
 
-const Hello = () => {
+const Site = () => {
 	return <div>
 		<Head>
 			<title>GreenJS Docs</title>
 			<meta name="cache-control" content="public" />
 			<link rel="stylesheet" href="/App.css" />
+			<meta name="viewport" content="width=device-width, initial-scale=1" />
 		</Head>
 		<Router>
 			<Route path="/docs/intro" asyncPage={() => import("./src/topics/00_intro")} />
@@ -20,4 +21,4 @@ const Hello = () => {
 	</div>
 }
 
-Render(<Hello />);
+Render(<Site />);

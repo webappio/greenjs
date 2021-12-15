@@ -30,7 +30,9 @@ function DocBase({children}) {
                     <Link href="/"><img src="/static/images/Logo.svg" alt="GreenJS logo" width="96" height="48"/></Link>
                     <div className="flex text-lg font-bold uppercase">
                         <input type="text" className="border border-slate-200 rounded-md px-2 grow shrink" placeholder="Search..."/>
-                        <a href="https://join.slack.com/t/greenjs/shared_invite/zt-109by8mrn-p9gbRlSovBXvoM_5VZn31g" className="ml-8 hover:underline">Community</a>
+                        <a href="https://join.slack.com/t/greenjs/shared_invite/zt-109by8mrn-p9gbRlSovBXvoM_5VZn31g" className="ml-8 hover:underline">
+                            Community
+                        </a>
                     </div>
                 </div>
             </AppBar>

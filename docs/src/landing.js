@@ -3,12 +3,18 @@ import {Head} from "@greenio/head";
 import {Link} from "@greenio/router";
 
 function Navbar() {
-    return <div className="container flex m-6 justify-between">
-        <Link href="/"><img src="/static/images/Logo.svg" alt="GreenJS logo" width="128" height="64"/></Link>
-        <div className="flex text-lg font-bold uppercase">
-            <Link href="/docs/intro" className="mx-8 hover:underline">Docs</Link>
-            <a href="https://join.slack.com/t/greenjs/shared_invite/zt-109by8mrn-p9gbRlSovBXvoM_5VZn31g" className="mx-8 hover:underline">Community</a>
-            <a href="https://github.com/webappio/greenjs" className="ml-8 hover:underline">GitHub</a>
+    return <div className="container flex p-2 py-6 md:p-6 justify-between">
+        <Link href="/" className="flex-basis-[128px] grow-0 shrink-0 mx-2 md:mx-8">
+            <img src="/static/images/Logo.svg" alt="GreenJS logo" width="128" height="64"/>
+        </Link>
+        <div className="flex text-lg font-bold uppercase items-center">
+            <Link
+                className="mx-2 md:mx-8 hover:underline"
+                href="/docs/intro">Docs</Link>
+            <a className="mx-2 md:mx-8 hover:underline"
+               href="https://join.slack.com/t/greenjs/shared_invite/zt-109by8mrn-p9gbRlSovBXvoM_5VZn31g">Community</a>
+            <a className="mx-2 md:mx-8 hover:underline hidden md:block"
+               href="https://github.com/webappio/greenjs">GitHub</a>
         </div>
     </div>
 }
