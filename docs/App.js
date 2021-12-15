@@ -3,30 +3,19 @@
 import React from "react";
 import {Render} from "@greenio/react";
 import {Head} from "@greenio/head";
-import {Link, Route, Router} from "@greenio/router";
-
-const Landing = () => {
-	return <main>
-		<Head>
-			<title>Prerendering react sites with esbuild | Better SEO without added complexity | GreenJS</title>
-		</Head>
-		<h1>Make performant sites with only Javascript</h1>
-		<p>GreenJS turns regular client-side react into performant websites by pre-rendering every page with ESBuild and a headless browser.</p>
-		<Link href="/docs/intro">View docs<br /></Link>
-		<Link href="/docs/router">router docs</Link>
-	</main>
-}
+import {Route, Router} from "@greenio/router";
 
 const Hello = () => {
 	return <div>
 		<Head>
 			<title>GreenJS Docs</title>
 			<meta name="cache-control" content="public" />
+			<link rel="stylesheet" href="App.css" />
 		</Head>
 		<Router>
-			<Route path="/docs/intro" exact asyncPage={() => import("./src/topics/00_intro")} />
-			<Route path="/docs/router" exact asyncPage={() => import("./src/topics/05_router")} />
-			<Route path="/"><Landing /></Route>
+			<Route path="/docs/intro" asyncPage={() => import("./src/topics/00_intro")} />
+			<Route path="/docs/router" asyncPage={() => import("./src/topics/05_router")} />
+			<Route path="/" asyncPage={() => import("./src/landing")}/>
 		</Router>
 	</div>
 }

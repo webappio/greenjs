@@ -8,6 +8,6 @@ export default function Page() {
         <Link to="/docs/intro/marketing">Marketing site for full-stack app</Link>
         <Link to="/docs/intro/ecommerce">E-commerce site (with Shopify)</Link>
         <Link to="/docs/intro/static">Personal site or blog</Link>
-        <Link to="/docs/intro/static">Docs with search</Link>
+        <Link to="/docs/intro/docs">Docs with search</Link>
     </div>
 }
