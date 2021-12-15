@@ -38,6 +38,8 @@ http.createServer(function (req, res) {
       res.setHeader("Content-Type", "application/javascript");
     } else if (req.url.endsWith(".svg")) {
       res.setHeader("Content-Type", "image/svg+xml");
+    } else if (req.url.endsWith(".css")) {
+      res.setHeader("Content-Type", "text/css");
     } else {
       res.setHeader("Content-Type", "text/html");
     }
