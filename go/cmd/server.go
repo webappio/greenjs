@@ -42,24 +42,30 @@ func (srv *GreenJsServer) Serve(listener net.Listener) error {
 
 	srv.reverseProxy = httputil.NewSingleHostReverseProxy(&url.URL{Scheme: "http", Host: srv.buildServerHost})
 
+	var upstreamReverseProxy *httputil.ReverseProxy
 	if srv.UpstreamHost != "" {
-		upstreamReverseProxy := httputil.NewSingleHostReverseProxy(&url.URL{Scheme: "http", Host: srv.UpstreamHost})
-		srv.reverseProxy.ModifyResponse = func(response *http.Response) error {
-			if response.StatusCode == http.StatusNotFound {
-				return errNotFound
-			}
-			return nil
+		upstreamReverseProxy = httputil.NewSingleHostReverseProxy(&url.URL{Scheme: "http", Host: srv.UpstreamHost})
+	}
+	srv.reverseProxy.ModifyResponse = func(response *http.Response) error {
+		if response.StatusCode == http.StatusNotFound {
+			return errNotFound
 		}
-		srv.reverseProxy.ErrorHandler = func(writer http.ResponseWriter, request *http.Request, err error) {
-			if err == errNotFound {
-				upstreamReverseProxy.ServeHTTP(writer, request)
-				return
+		return nil
+	}
+	srv.reverseProxy.ErrorHandler = func(rw http.ResponseWriter, request *http.Request, err error) {
+		if err == errNotFound {
+			if upstreamReverseProxy != nil {
+				upstreamReverseProxy.ServeHTTP(rw, request)
+			} else {
+				rw.Header().Set("Content-Type", "text/html")
+				rw.Write(resources.IndexHTML)
 			}
-			writer.Header().Set("Content-Type", "text/plain")
-			writer.Header().Set("Content-Length", "5")
-			writer.WriteHeader(http.StatusBadGateway)
-			writer.Write([]byte("error")) //TODO make prettier
+			return
 		}
+		rw.Header().Set("Content-Type", "text/plain")
+		rw.Header().Set("Content-Length", "5")
+		rw.WriteHeader(http.StatusBadGateway)
+		rw.Write([]byte("error")) //TODO make prettier
 	}
 
 	server := http.Server{Handler: srv}
