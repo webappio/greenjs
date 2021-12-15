@@ -14,7 +14,7 @@ function Navbar() {
 }
 
 function Footer() {
-    return <div className="bg-[#113118] text-white self-stretch py-5 flex justify-center">
+    return <div className="bg-[#113118] text-white self-stretch p-6 flex justify-center">
         <div className="container flex flex-col">
             <img src="/static/images/Logo white.svg" alt="GreenJS logo" width="128" height="64"/>
             <div className="my-5 columns-2">
@@ -33,7 +33,7 @@ function Footer() {
                     <Link href="/docs/details" className="text-white hover:underline">Implementation details</Link>
                 </div>
             </div>
-            <div className="text-right">
+            <div className="text-right border-t-2 pt-5 mt-2 border-slate-200">
                 ©2021 Colin Chartier and the GreenJS authors
             </div>
         </div>
@@ -46,7 +46,7 @@ export default function Landing() {
             <title>Prerendering react sites with esbuild | Better SEO without added complexity | GreenJS</title>
         </Head>
         <Navbar />
-        <div className="container flex flex-col my-16 items-center">
+        <div className="container flex flex-col my-16 items-center mx-6">
             <h1 className="text-3xl font-bold text-center">Blazingly fast pre-rendered frontends for React</h1>
             <p className="text-xl text-center mt-6 mb-10">GreenJS speeds up React sites by prerendering them with esbuild.</p>
             <Link

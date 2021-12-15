@@ -1,13 +1,10 @@
 import React from "react";
 import {Link} from "@greenio/router";
+import {DocBase} from "./common";
 
 export default function Page() {
-    return <div>
-        <h1>Getting started with GreenJS</h1>
-        <p>Click an example below to see how to get started with GreenJS for your use-case</p>
-        <Link to="/docs/intro/marketing">Marketing site for full-stack app</Link>
-        <Link to="/docs/intro/ecommerce">E-commerce site (with Shopify)</Link>
-        <Link to="/docs/intro/static">Personal site or blog</Link>
-        <Link to="/docs/intro/docs">Docs with search</Link>
-    </div>
+    return <DocBase>
+        <h1 className="font-bold">Getting started with GreenJS</h1>
+        <p>{new Array(1000).fill("hello").join(" ")}</p>
+    </DocBase>
 }

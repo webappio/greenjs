@@ -10,7 +10,7 @@ const Hello = () => {
 		<Head>
 			<title>GreenJS Docs</title>
 			<meta name="cache-control" content="public" />
-			<link rel="stylesheet" href="App.css" />
+			<link rel="stylesheet" href="/App.css" />
 		</Head>
 		<Router>
 			<Route path="/docs/intro" asyncPage={() => import("./src/topics/00_intro")} />
