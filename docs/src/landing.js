@@ -82,8 +82,8 @@ export default function Landing() {
                 <img src="/static/images/book-open.svg" height="30" width="30" alt="" className="mr-4"/> Read the Docs
             </Link>
         </div>
-        <div className="container flex flex-col my-8 items-center mx-6">
-            <h5 className="uppercase font-bold bg-gradient-to-br bg-clip-text text-transparent from-green-500 to-green-600 text-3xl mt-20 mb-10 lg:mt-40 lg:mb-96">Getting Started</h5>
+        <div className="container flex flex-col mt-40 mb-20 items-center mx-6">
+            <h5 className="uppercase font-bold bg-gradient-to-br bg-clip-text text-transparent from-green-500 to-green-600 text-3xl mt-20 mb-10 lg:mt-40 lg:mb-96">How to Get Started</h5>
             <InstallStep
                 imgElement={<img src="/static/images/react-code.svg" width="270" height="335" alt="Sample of React code" className="w-full h-auto lg:-translate-y-80"/>}
                 title="1. Write React code like you usually would"
@@ -98,7 +98,7 @@ export default function Landing() {
                 At build-time, we’ll discover all of your routes. We’ll send a headless browser to visit all of your pages and run your React code. The resulting pages will be saved as HTML.
             </InstallStep>
             <InstallStep
-                imgElement={<img src="/static/images/host-your-site.svg" width="270" height="234" alt="Visualization of uploading dist.zip" className="w-full h-auto lg:-translate-y-60"/>}
+                imgElement={<img src="/static/images/host-your-site.svg" width="270" height="234" alt="Visualization of uploading dist.zip" className="w-full h-auto lg:-translate-y-60 mt-28"/>}
                 title="3. Host your site as you usually would"
                 hideBar
             >
