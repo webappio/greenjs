@@ -70,7 +70,7 @@ export default function Landing() {
             <title>Prerendering react sites with esbuild | Better SEO without added complexity | GreenJS</title>
         </Head>
         <Navbar />
-        <div className="container flex flex-col my-8 items-center mx-6 max-w-full md:max-w-[75%]">
+        <div className="container flex flex-col my-8 items-center mx-6 max-w-full md:max-w-[75%] md:my-20 lg:my-32">
             <h1 className="text-4xl font-bold text-center"><span className="bg-gradient-to-br bg-clip-text text-transparent from-green-500 to-green-600">Blazingly</span> fast pre-rendered React sites</h1>
             <p className="text-3xl text-center my-12">GreenJS makes sites load faster by sending content before any javascript loads.</p>
             <Link
@@ -82,7 +82,7 @@ export default function Landing() {
                 <img src="/static/images/book-open.svg" height="30" width="30" alt="" className="mr-4"/> Read the Docs
             </Link>
         </div>
-        <div className="container flex flex-col mt-40 mb-20 items-center mx-6">
+        <div className="container flex flex-col my-20 items-center mx-6">
             <h5 className="uppercase font-bold bg-gradient-to-br bg-clip-text text-transparent from-green-500 to-green-600 text-3xl mt-20 mb-10 lg:mt-40 lg:mb-96">How to Get Started</h5>
             <InstallStep
                 imgElement={<img src="/static/images/react-code.svg" width="270" height="335" alt="Sample of React code" className="w-full h-auto lg:-translate-y-80"/>}

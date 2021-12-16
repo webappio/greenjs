@@ -1,5 +1,5 @@
 {
-  "name": "@greenio/greenjs",
+  "name": "greenjs",
   "version": "1.0.6",
   "description": "Blazingly-fast site generator for React",
   "directories": {
