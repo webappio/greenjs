@@ -48,8 +48,10 @@ function Footer() {
 
 function InstallStep({imgElement, title, children, hideBar}) {
     return <div className="flex flex-col items-center text-center lg:text-left lg:flex-row lg:items-start my-20 lg:my-0">
-        <div className="flex my-12 lg:basis-6/12 grow lg:grow-0 max-w-[400px] lg:max-w-full shrink items-center">
+        <div className="flex my-12 lg:basis-6/12 justify-end">
+            <div className="max-w-[500px] shrink grow flex">
             {imgElement}
+            </div>
         </div>
         <div className="self-stretch hidden lg:flex flex-col items-center mr-8 mr-lg-16 ml-lg-8">
             <div className="border-solid border-4 border-slate-200 rounded-full p-3"/>
