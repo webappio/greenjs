@@ -1,6 +1,6 @@
 {
   "name": "create-greenjs-app",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Build greenjs projects with a single command",
   "bin": {
     "create-greenjs-app": "./main.js"

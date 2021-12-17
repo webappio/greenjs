@@ -16,6 +16,9 @@ const Hello = () => {
 		<Head>
 			<title>greenjs app!</title>
 			<link rel='stylesheet' href="/App.css"/>
+			{/*this line is used to make sites mobile responsive*/}
+			{/*Read more here: https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag*/}
+			<meta name="viewport" content="width=device-width, initial-scale=1" />
 		</Head>
 		{/*Router lets you specify multiple pages, in this case one at localhost:8000/pricing and one at localhost:8000*/}
 		<main className="flex flex-col">
