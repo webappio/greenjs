@@ -1,0 +1,81 @@
+body, html {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+a {
+    text-decoration: none;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.bg-emerald-900 {
+    background-color: #064E3B;
+}
+
+.text-white {
+    color: white;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+.mx-8 {
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+.py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+
+.container {
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .container {
+        max-width: 640px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 768px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1024px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1280px;
+    }
+}
+
+@media (min-width: 1536px) {
+    .container {
+        max-width: 1536px;
+    }
+}
