@@ -14,8 +14,8 @@ const Site = () => {
 			<meta name="viewport" content="width=device-width, initial-scale=1" />
 		</Head>
 		<Router>
-			<Route path="/docs/intro" asyncPage={() => import("./src/topics/00_intro")} />
-			<Route path="/docs/router" asyncPage={() => import("./src/topics/05_router")} />
+			<Route path="/docs/installation" asyncPage={() => import("./src/topics/getting-started/installation")} />
+			<Route path="/docs/router" asyncPage={() => import("./src/topics/react-components/router")} />
 			<Route path="/" asyncPage={() => import("./src/landing")}/>
 		</Router>
 	</div>

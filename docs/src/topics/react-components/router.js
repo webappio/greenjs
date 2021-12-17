@@ -1,10 +1,11 @@
 import React from "react";
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import {DocBase} from "../base-doc-page";
 
 export default function Page() {
-    return <div>
-        <h1>The GreenJS Router</h1>
+    return <DocBase>
+        <h1 className="font-bold text-2xl mb-4">Using the GreenJS router</h1>
         <h3>Examples</h3>
         <h5>Route to a page if possible</h5>
         <SyntaxHighlighter language="javascript" style={docco}>{`
@@ -56,5 +57,5 @@ export default function App() {
     <Route asyncPage={() => import("./pages/404")} />
   </Router>
 }`}</SyntaxHighlighter>
-    </div>
+    </DocBase>
 }
