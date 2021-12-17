@@ -1,14 +1,14 @@
 import React from "react";
 
-const getPathResult = (path, routeDef) => {
+const getPathResult = (path, routePath) => {
     if(path.charAt(0) !== "/") {
         path = "/" + path;
     }
 
     const pathSplit = path.split("/");
-    const routeSplit = routeDef.split("/");
+    const routeSplit = routePath.split("/");
 
-    const result = {success: false, params: {}};
+    const result = {success: false, params: {}, routePath: routePath};
     for(let i = 0; i < routeSplit.length; i += 1) {
         if(routeSplit[i].charAt(0) === ":") {
             result.params = {...result.params, [routeSplit[i].substring(1)]: pathSplit[i]};
@@ -28,6 +28,7 @@ const getPathResult = (path, routeDef) => {
 
 const RouteContext = React.createContext({
     params: {},
+    routePath: "",
 });
 
 const Router = ({children}) => {
@@ -66,7 +67,7 @@ const Router = ({children}) => {
     if(!bestMatchResult) {
         return null;
     }
-    return <RouteContext.Provider value={{params: bestMatchResult.params}}>
+    return <RouteContext.Provider value={{params: bestMatchResult.params, routePath: bestMatchResult.routePath}}>
         {bestMatchResult.route}
     </RouteContext.Provider>;
 }
@@ -81,11 +82,23 @@ const Route = ({path, asyncPage, children}) => {
     return <>{children}</>
 }
 
-const Link = React.forwardRef(({href, to, children, ...props}, ref) => {
+const Link = React.forwardRef(({href, to, children, activeClassName, className, ...props}, ref) => {
     if (!href && to) {
         href = to;
     }
-    return <a href={href} {...props} onClick={e => {
+    let currRoute = useRoute();
+    if(activeClassName && currRoute?.routePath) {
+        let result = getPathResult(href, currRoute?.routePath)
+        if(result.success) {
+            if(!className) {
+                className = "";
+            }
+            className = (className + " " + activeClassName).trim();
+        }
+
+    }
+
+    return <a href={href} {...props} className={className} onClick={e => {
         let modKeyDown = false;
         if(/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
             modKeyDown = e.metaKey;
