@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 
 const getPathResult = (path, routePath) => {
     if(path.charAt(0) !== "/") {
@@ -39,6 +39,8 @@ const Router = ({children}) => {
         throw new Error("Invalid Router children, expected a list of Route")
     }
 
+    const [currRoute, setCurrRoute] = React.useState(null);
+
     const [pathname, setPathname] = React.useState(window.location.pathname);
     window.history.pushState = new Proxy(window.history.pushState, {
         apply: (target, thisArg, argArray) => {
@@ -68,13 +70,18 @@ const Router = ({children}) => {
         return null;
     }
     return <RouteContext.Provider value={{params: bestMatchResult.params, routePath: bestMatchResult.routePath}}>
-        {bestMatchResult.route}
+        <React.Suspense fallback={<>{currRoute}</>}>
+            {React.cloneElement(bestMatchResult.route, {inRouter: true})}
+        </React.Suspense>
     </RouteContext.Provider>;
 }
 
-const Route = ({path, asyncPage, children}) => {
+const Route = ({path, asyncPage, children, inRouter}) => {
     if (asyncPage) {
         const E = React.lazy(asyncPage);
+        if(inRouter) {
+            return <E />
+        }
         return <React.Suspense fallback={<></>}>
             <E/>
         </React.Suspense>

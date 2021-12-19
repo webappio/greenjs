@@ -31,7 +31,7 @@ function Sidebar() {
         <div className="px-3 d-flex pb-8 max-h-[calc(100vh-6rem)] w-full overflow-y-auto">
             <h3 className="text-md font-bold">Getting Started</h3>
             <div className="border-l-2 border-slate-200 mt-2 mb-8 ml-1 flex flex-col">
-                <SidebarLink href="/docs/getting-started">The basics</SidebarLink>
+                <SidebarLink href="/docs/basics">The basics</SidebarLink>
                 <SidebarLink href="/docs/installation">Installation</SidebarLink>
                 <SidebarLink href="/docs/examples">Examples</SidebarLink>
                 <SidebarLink href="/docs/core-concepts">Core Concepts</SidebarLink>
@@ -59,7 +59,7 @@ function Sidebar() {
             <h3 className="text-md font-bold">Comparisons</h3>
             <div className="border-l-2 border-slate-200 mt-2 mb-8 ml-1 flex flex-col">
                 <SidebarLink href="/docs/nextjs-comparison">NextJS</SidebarLink>
-                <SidebarLink href="/docs/vite-comparison">Vite</SidebarLink>
+                <SidebarLink href="/docs/create-react-app-comparison">create-react-app</SidebarLink>
             </div>
         </div>
     </div>
@@ -121,7 +121,7 @@ function DocBase({children}) {
         >
             <Sidebar/>
         </Drawer>
-        <div className="hidden md:flex w-[240px]">
+        <div className="hidden md:flex grow-0 shrink-0 basis-[240px]">
             <Sidebar/>
         </div>
         <div className="flex flex-col pt-28 px-4 sm:px-8 md:px-12 container">

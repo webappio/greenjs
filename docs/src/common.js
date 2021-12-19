@@ -23,23 +23,25 @@ export function Footer() {
     return <div className="bg-[#113118] text-white self-stretch p-4 py-6 md:p-6 md:py-12 flex justify-center">
         <div className="container flex flex-col">
             <img src="/static/images/Logo-white.svg" alt="GreenJS logo" width="128" height="64"/>
-            <div className="my-5 columns-2">
-                <div className="flex flex-col items-start">
-                    <h5 className="uppercase text-slate-200">Examples</h5>
-                    <Link href="/docs/intro/marketing" className="text-white hover:underline">Full-stack apps</Link>
-                    <Link href="/docs/intro/ecommerce" className="text-white hover:underline">E-commerce</Link>
-                    <Link href="/docs/intro/static" className="text-white hover:underline">Blog</Link>
-                    <Link href="/docs/intro/docs" className="text-white hover:underline">Doc site</Link>
+            <div className="flex flex-col sm:flex-row">
+                <div className="flex flex-col items-start sm:basis-1/2 my-5">
+                    <h5 className="uppercase text-slate-200 mb-1">Docs</h5>
+                    <Link href="/docs/basics" className="text-white hover:underline">The basics</Link>
+                    <Link href="/docs/installation" className="text-white hover:underline">Installation</Link>
+                    <Link href="/docs/examples" className="text-white hover:underline">Examples</Link>
+                    <Link href="/docs/core-concepts" className="text-white hover:underline">Core concepts</Link>
                 </div>
-                <div className="flex flex-col items-start">
-                    <h5 className="uppercase text-slate-200">Docs</h5>
-                    <Link href="/docs/intro" className="text-white hover:underline">Introduction</Link>
-                    <Link href="/docs/routing" className="text-white hover:underline">Routing</Link>
-                    <Link href="/docs/head" className="text-white hover:underline">&lt;Head> tag</Link>
-                    <Link href="/docs/details" className="text-white hover:underline">Implementation details</Link>
+                <div className="flex flex-col items-start basis-full sm:basis-1/2 my-5">
+                    <h5 className="uppercase text-slate-200 mb-1">Comparisons</h5>
+                    <Link href="/docs/intro" className="text-white hover:underline">NextJS</Link>
+                    <Link href="/docs/create-react-app-comparison" className="text-white hover:underline">create-react-app</Link>
                 </div>
             </div>
-            <div className="text-right text-sm border-t-2 pt-5 mt-2 border-slate-200">
+            <div className="flex justify-between text-right text-sm border-t-2 pt-5 mt-2 border-slate-200">
+                <a href="https://github.com/webappio/greenjs">
+                    <img src="/static/images/github.svg" alt="View GitHub repository" width="40" height="40"
+                         className="pr-4 invert"/>
+                </a>
                 ©2021 Colin Chartier and the GreenJS authors
             </div>
         </div>
