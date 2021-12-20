@@ -43,7 +43,8 @@ func publishPackageJson(fileName string, data interface{}) {
 type ArchTarget struct {
 	GOOS, GOARCH string
 	BinaryName string
-	Cpu string //for package.json
+	CPU string //for package.json
+	OS string //for package.json
 }
 
 type PackageJson struct {
@@ -54,6 +55,8 @@ type PackageJson struct {
 	License string `json:"license,omitempty"`
 	Bin map[string]string `json:"bin,omitempty"`
 	PeerDependencies map[string]string `json:"peerDependencies,omitempty"`
+	OS []string `json:"os,omitempty"`
+	CPU []string `json:"cpu,omitempty"`
 }
 
 func main() {
@@ -61,27 +64,28 @@ func main() {
 		{
 			GOOS: "linux",
 			GOARCH: "amd64",
-			Cpu: "x64",
+			CPU: "x64",
 		},
 		{
 			GOOS: "linux",
 			GOARCH: "386",
-			Cpu: "ia32",
+			CPU: "ia32",
 		},
 		{
 			GOOS: "darwin",
 			GOARCH: "amd64",
-			Cpu: "x64",
+			CPU: "x64",
 		},
 		{
 			GOOS: "darwin",
 			GOARCH: "arm64",
-			Cpu: "arm64",
+			CPU: "arm64",
 		},
 		{
 			GOOS: "windows",
 			GOARCH: "amd64",
-			Cpu: "x64",
+			CPU: "x64",
+			OS: "win32",
 			BinaryName: "greenjs.exe",
 		},
 	}
@@ -93,7 +97,14 @@ func main() {
 	metaPackageJson.PeerDependencies = map[string]string{}
 
 	for _, arch := range arches {
-		err := os.MkdirAll(filepath.Join("dist", arch.GOOS+"-"+arch.Cpu, "bin"), 0o700)
+		if arch.BinaryName == "" {
+			arch.BinaryName = "greenjs"
+		}
+		if arch.OS == "" {
+			arch.OS = arch.GOOS
+		}
+
+		err := os.MkdirAll(filepath.Join("dist", arch.GOOS+"-"+arch.CPU, "bin"), 0o700)
 		if err != nil {
 			panic(err)
 		}
@@ -102,20 +113,18 @@ func main() {
 		unmarshal("arch-package.json", &archPackageJson)
 
 		archPackageJson.Version = metaPackageJson.Version
-		archPackageJson.Name = "@greenio/greenjs-"+arch.GOOS+"-"+arch.Cpu
-		binName := "greenjs"
-		if arch.BinaryName != "" {
-			binName = arch.BinaryName
-		}
-		archPackageJson.Bin = map[string]string{"greenjs": filepath.Join("bin", binName)}
+		archPackageJson.Name = "@greenio/greenjs-"+arch.GOOS+"-"+arch.CPU
+		archPackageJson.Bin = map[string]string{"greenjs": filepath.Join("bin", arch.BinaryName)}
+		archPackageJson.OS = []string{arch.OS}
+		archPackageJson.CPU = []string{arch.CPU}
 		metaPackageJson.PeerDependencies[archPackageJson.Name] = archPackageJson.Version
-		cmd := exec.Command("go", "build", "-o", filepath.Join("dist", arch.GOOS+"-"+arch.Cpu, "bin", binName))
+		cmd := exec.Command("go", "build", "-o", filepath.Join("dist", arch.GOOS+"-"+arch.CPU, "bin", arch.BinaryName))
 		cmd.Env = append(os.Environ(), "GOOS="+arch.GOOS, "GOARCH="+arch.GOARCH)
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			panic(errors.Wrap(err, string(out)))
 		}
-		publishPackageJson(filepath.Join("dist", arch.GOOS+"-"+arch.Cpu, "package.json"), archPackageJson)
+		publishPackageJson(filepath.Join("dist", arch.GOOS+"-"+arch.CPU, "package.json"), archPackageJson)
 
 	}
 
