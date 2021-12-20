@@ -102,10 +102,18 @@ const Link = React.forwardRef(({href, to, children, activeClassName, className, 
             }
             className = (className + " " + activeClassName).trim();
         }
-
     }
+    let externalHost = false;
+    try {
+        if((new URL(href, document.location.href)).host !== document.location.host) {
+            externalHost = true;
+        }
+    } catch (e){} //invalid hostname of some sort
 
     return <a href={href} {...props} className={className} onClick={e => {
+        if(externalHost) {
+            return;
+        }
         let modKeyDown = false;
         if(/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
             modKeyDown = e.metaKey;

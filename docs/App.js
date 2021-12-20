@@ -15,7 +15,7 @@ const Site = () => {
 		</Head>
 		<Router>
 			<Route path="/docs/basics" asyncPage={() => import("./src/topics/getting-started/basics")} />
-			<Route path="/docs/installation" asyncPage={() => import("./src/topics/getting-started/installation")} />
+			<Route path="/docs/hosting" asyncPage={() => import("./src/topics/getting-started/hosting")} />
 			<Route path="/docs/examples" asyncPage={() => import("./src/topics/getting-started/examples")} />
 			<Route path="/docs/core-concepts" asyncPage={() => import("./src/topics/getting-started/core-concepts")} />
 			<Route path="/docs/router" asyncPage={() => import("./src/topics/react-components/router")} />

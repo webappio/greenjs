@@ -32,7 +32,7 @@ function Sidebar() {
             <h3 className="text-md font-bold">Getting Started</h3>
             <div className="border-l-2 border-slate-200 mt-2 mb-8 ml-1 flex flex-col">
                 <SidebarLink href="/docs/basics">The basics</SidebarLink>
-                <SidebarLink href="/docs/installation">Installation</SidebarLink>
+                <SidebarLink href="/docs/hosting">Hosting</SidebarLink>
                 <SidebarLink href="/docs/examples">Examples</SidebarLink>
                 <SidebarLink href="/docs/core-concepts">Core Concepts</SidebarLink>
             </div>
@@ -65,7 +65,7 @@ function Sidebar() {
     </div>
 }
 
-function DocBase({children}) {
+export function DocBase({children}) {
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     return <div className="flex">
         <HideOnScroll>
@@ -130,4 +130,10 @@ function DocBase({children}) {
     </div>
 }
 
-export {DocBase}
+export function DocCmd({children}) {
+    return <code className="whitespace-nowrap text-rose-700 font-bold">{children}</code>
+}
+
+export function DocLink({children, ...props}) {
+    return <Link {...props} className="text-blue-500 hover:underline">{children}</Link>
+}

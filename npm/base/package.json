@@ -1,18 +1,7 @@
 {
   "name": "greenjs",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Blazingly-fast site generator for React",
-  "directories": {
-    "example": "examples"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build-dist": "mkdir -p bin && GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -tags netgo -ldflags -'w' -o bin/greenjs ../../main.go",
-    "publish-to-npm": "npm run build-dist && npm publish --access public"
-  },
-  "bin": {
-    "greenjs": "./bin/greenjs"
-  },
   "author": "Colin Chartier",
   "license": "MIT"
 }

@@ -9,7 +9,7 @@ export function Navbar() {
         <div className="flex text-lg font-bold uppercase items-center">
             <Link
                 className="mx-2 md:mx-8 hover:underline"
-                href="/docs/intro">Docs</Link>
+                href="/docs/basics">Docs</Link>
             <a className="mx-2 md:mx-8 hover:underline"
                href="https://join.slack.com/t/greenjs/shared_invite/zt-109by8mrn-p9gbRlSovBXvoM_5VZn31g">Community</a>
             <a className="mx-2 md:mx-8 hover:underline hidden md:block"
@@ -33,7 +33,7 @@ export function Footer() {
                 </div>
                 <div className="flex flex-col items-start basis-full sm:basis-1/2 my-5">
                     <h5 className="uppercase text-slate-200 mb-1">Comparisons</h5>
-                    <Link href="/docs/intro" className="text-white hover:underline">NextJS</Link>
+                    <Link href="/docs/nextjs-comparison" className="text-white hover:underline">NextJS</Link>
                     <Link href="/docs/create-react-app-comparison" className="text-white hover:underline">create-react-app</Link>
                 </div>
             </div>

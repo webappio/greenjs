@@ -1,11 +1,18 @@
 import React from "react";
-import {DocBase} from "../base-doc-page";
+import {DocBase, DocLink} from "../base-doc-page";
 
 export default function Page() {
     return <DocBase>
         <h1 className="font-bold text-2xl mb-4">Examples</h1>
-        <p>To start using GreenJS, run <code>npx create-greenjs-app</code></p>
-        <p>This will create a folder named <i>greenjs-example</i> with the following directory structure:</p>
+        <div className="flex flex-col">
+            <DocLink href="https://github.com/webappio/greenjs/tree/master/examples/hello-world-react">
+                A very simple 'hello world' app
+            </DocLink>
+            <DocLink href="https://github.com/webappio/greenjs/tree/master/docs">
+                The GreenJS docs themselves
+            </DocLink>
+        </div>
+
 
     </DocBase>
 }
