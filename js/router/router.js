@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 
 const getPathResult = (path, routePath) => {
-    if(path.charAt(0) !== "/") {
+    if (path.charAt(0) !== "/") {
         path = "/" + path;
     }
 
@@ -9,15 +9,15 @@ const getPathResult = (path, routePath) => {
     const routeSplit = routePath.split("/");
 
     const result = {success: false, params: {}, routePath: routePath};
-    for(let i = 0; i < routeSplit.length; i += 1) {
-        if(routeSplit[i].charAt(0) === ":") {
+    for (let i = 0; i < routeSplit.length; i += 1) {
+        if (routeSplit[i].charAt(0) === ":") {
             result.params = {...result.params, [routeSplit[i].substring(1)]: pathSplit[i]};
             //route is of the form /hello/:param/something
         } else if (routeSplit[i].charAt(0) === "*") {
             //route is of the form /hello/*param
             result.success = true;
             return result;
-        } else if(i >= pathSplit.length || pathSplit[i] !== routeSplit[i]) {
+        } else if (i >= pathSplit.length || pathSplit[i] !== routeSplit[i]) {
             result.success = false;
             return result;
         }
@@ -29,6 +29,7 @@ const getPathResult = (path, routePath) => {
 const RouteContext = React.createContext({
     params: {},
     routePath: "",
+    getMatchingRoute: route => null,
 });
 
 const Router = ({children}) => {
@@ -53,35 +54,51 @@ const Router = ({children}) => {
         setPathname(window.location.pathname);
     })
 
-    let bestMatchResult = null;
-    for (let route of children) {
-        if (!route?.props?.path) {
-            throw new Error("Invalid Router child, all children must be Routes with a path")
-        }
-        let matchResult = getPathResult(pathname, route.props.path);
-        if (matchResult.success) {
-            if (bestMatchResult === null) {
-                bestMatchResult = {...matchResult, route: route};
+    const getBestRoute = path => {
+        let bestMatchResult = null;
+        for (let route of children) {
+            if (!route?.props?.path) {
+                throw new Error("Invalid Router child, all children must be Routes with a path")
             }
+            let matchResult = getPathResult(path, route.props.path);
+            if (matchResult.success) {
+                if (bestMatchResult === null) {
+                    bestMatchResult = {matchResult, reactEl: route};
+                }
+            }
+            window._GreenJSRoutes = {...(window._GreenJSRoutes ?? {}), [route.props.path]: true}
         }
-        window._GreenJSRoutes = {...(window._GreenJSRoutes ?? {}), [route.props.path]: true}
+        return bestMatchResult;
     }
-    if(!bestMatchResult) {
+    let result = getBestRoute(pathname);
+
+    if (!result) {
         return null;
     }
-    return <RouteContext.Provider value={{params: bestMatchResult.params, routePath: bestMatchResult.routePath}}>
+    return <RouteContext.Provider value={{
+        params: result.matchResult.params,
+        routePath: result.matchResult.routePath,
+        getMatchingRoute: path => getBestRoute(path),
+    }}>
         <React.Suspense fallback={<>{currRoute}</>}>
-            {React.cloneElement(bestMatchResult.route, {inRouter: true})}
+            {React.cloneElement(result.reactEl, {inRouter: true})}
         </React.Suspense>
     </RouteContext.Provider>;
 }
 
 const Route = ({path, asyncPage, children, inRouter}) => {
     if (asyncPage) {
-        const E = React.lazy(asyncPage);
-        if(inRouter) {
-            return <E />
+        const Loaded = (window._GreenJSAsyncPages || {})[path];
+        if(Loaded) {
+            return <Loaded />
         }
+        const E = React.lazy(() => {
+            let importPromise = asyncPage();
+            importPromise.then(page => {
+                window._GreenJSAsyncPages = {...(window._GreenJSAsyncPages || {}), [path]: page.default}
+            });
+            return importPromise;
+        });
         return <React.Suspense fallback={<></>}>
             <E/>
         </React.Suspense>
@@ -93,11 +110,12 @@ const Link = React.forwardRef(({href, to, children, activeClassName, className, 
     if (!href && to) {
         href = to;
     }
+    const url = new URL(href, document.location.href);
     let currRoute = useRoute();
-    if(activeClassName && currRoute?.routePath) {
-        let result = getPathResult(href, currRoute?.routePath)
-        if(result.success) {
-            if(!className) {
+    if (activeClassName && currRoute?.routePath) {
+        let result = getPathResult(url.pathname, currRoute?.routePath)
+        if (result.success) {
+            if (!className) {
                 className = "";
             }
             className = (className + " " + activeClassName).trim();
@@ -105,26 +123,52 @@ const Link = React.forwardRef(({href, to, children, activeClassName, className, 
     }
     let externalHost = false;
     try {
-        if((new URL(href, document.location.href)).host !== document.location.host) {
+        if (url.host !== document.location.host) {
             externalHost = true;
         }
-    } catch (e){} //invalid hostname of some sort
+    } catch (e) {
+    } //invalid hostname of some sort
 
-    return <a href={href} {...props} className={className} onClick={e => {
+    const tryPreloadImports = () => {
         if(externalHost) {
             return;
         }
-        let modKeyDown = false;
-        if(/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
-            modKeyDown = e.metaKey;
-        } else {
-            modKeyDown = e.ctrlKey;
+        if(!currRoute) {
+            return;
         }
-        if (!modKeyDown) {
-            e.preventDefault();
-            history.pushState(null, "", href);
+        let match = currRoute.getMatchingRoute(url.pathname);
+        let asyncPage = match?.reactEl?.props?.asyncPage;
+        if(!asyncPage) {
+            return;
         }
-    }} ref={ref}>{children}</a>
+        asyncPage().then(page => {
+            window._GreenJSAsyncPages = {...(window._GreenJSAsyncPages || {}), [match.matchResult.routePath]: page.default}
+        })
+    }
+
+    return <a
+        href={href}
+        {...props}
+        className={className}
+        onClick={e => {
+            if (externalHost) {
+                return;
+            }
+            let modKeyDown = false;
+            if (/(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)) {
+                modKeyDown = e.metaKey;
+            } else {
+                modKeyDown = e.ctrlKey;
+            }
+            if (!modKeyDown) {
+                e.preventDefault();
+                history.pushState(null, "", href);
+            }
+        }}
+        ref={ref}
+        onFocus={tryPreloadImports}
+        onMouseEnter={tryPreloadImports}
+    >{children}</a>
 });
 
 const useRoute = () => {
