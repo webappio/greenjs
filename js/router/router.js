@@ -41,15 +41,18 @@ const Router = ({children}) => {
     }
 
     const [currRoute, setCurrRoute] = React.useState(null);
-
     const [pathname, setPathname] = React.useState(window.location.pathname);
-    window.history.pushState = new Proxy(window.history.pushState, {
-        apply: (target, thisArg, argArray) => {
-            const res = target.apply(thisArg, argArray);
-            setPathname(window.location.pathname);
-            return res;
-        },
-    });
+    const [routeContents, setRouteContents] = React.useState(null);
+    if(!window._GreenJsPushStatePatched) {
+        window._GreenJsPushStatePatched = true;
+        window.history.pushState = new Proxy(window.history.pushState, {
+            apply: (target, thisArg, argArray) => {
+                const res = target.apply(thisArg, argArray);
+                setPathname(window.location.pathname);
+                return res;
+            },
+        });
+    }
     window.addEventListener("popstate", e => {
         setPathname(window.location.pathname);
     })
@@ -75,18 +78,30 @@ const Router = ({children}) => {
     if (!result) {
         return null;
     }
+
+    if(result?.reactEl?.props?.asyncPage) {
+        let importPromise = new Promise(resolve => {
+            result?.reactEl?.props?.asyncPage().then(page => {
+                window._GreenJSAsyncPages = {...(window._GreenJSAsyncPages || {}), [result?.matchResult.routePath]: page.default}
+                setRouteContents(page.default);
+                resolve();
+            })
+        });
+        window._GreenJSPromises = {...(_GreenJSPromises || {}), [result?.matchResult.routePath]: importPromise};
+    } else {
+        setRouteContents(result?.reactEl);
+    }
+
     return <RouteContext.Provider value={{
         params: result.matchResult.params,
         routePath: result.matchResult.routePath,
         getMatchingRoute: path => getBestRoute(path),
     }}>
-        <React.Suspense fallback={<>{currRoute}</>}>
-            {React.cloneElement(result.reactEl, {inRouter: true})}
-        </React.Suspense>
+        {routeContents}
     </RouteContext.Provider>;
 }
 
-const Route = ({path, asyncPage, children, inRouter}) => {
+const Route = ({path, asyncPage, children}) => {
     if (asyncPage) {
         const Loaded = (window._GreenJSAsyncPages || {})[path];
         if(Loaded) {
