@@ -84,10 +84,10 @@ const Router = ({children}) => {
             result?.reactEl?.props?.asyncPage().then(page => {
                 window._GreenJSAsyncPages = {...(window._GreenJSAsyncPages || {}), [result?.matchResult.routePath]: page.default}
                 setRouteContents(page.default);
-                resolve();
+                resolve(true);
             })
         });
-        window._GreenJSPromises = {...(_GreenJSPromises || {}), [result?.matchResult.routePath]: importPromise};
+        window._GreenJSPromises = {...(window._GreenJSPromises || {}), [result?.matchResult.routePath]: importPromise};
     } else {
         setRouteContents(result?.reactEl);
     }

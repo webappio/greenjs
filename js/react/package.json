@@ -1,6 +1,6 @@
 {
   "name": "@greenio/react",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Replacement for ReactDOM.render for GreenJS",
   "main": "react.js",
   "scripts": {

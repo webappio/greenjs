@@ -1,7 +1,13 @@
 {
   "name": "greenjs",
-  "version": "1.0.8",
+  "version": "1.0.15",
   "description": "Blazingly-fast site generator for React",
   "author": "Colin Chartier",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "node postinstall.js"
+  },
+  "bin": {
+    "greenjs": "main.js"
+  }
 }

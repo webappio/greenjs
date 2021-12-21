@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/pkg/errors"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -34,9 +34,11 @@ func publishPackageJson(fileName string, data interface{}) {
 
 	cmd := exec.Command("npm", "publish", "--access", "public")
 	cmd.Dir = filepath.Dir(fileName)
-	out, err := cmd.CombinedOutput()
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
 	if err != nil {
-		panic(errors.Wrap(err, string(out)))
+		panic(err)
 	}
 }
 
@@ -54,9 +56,21 @@ type PackageJson struct {
 	Author string `json:"author,omitempty"`
 	License string `json:"license,omitempty"`
 	Bin map[string]string `json:"bin,omitempty"`
-	PeerDependencies map[string]string `json:"peerDependencies,omitempty"`
+	OptionalDependencies map[string]string `json:"optionalDependencies,omitempty"`
 	OS []string `json:"os,omitempty"`
 	CPU []string `json:"cpu,omitempty"`
+}
+
+func copyFile(source, dest string) {
+	srcFile, err := os.Open(source)
+	if err != nil {
+		panic(err)
+	}
+	destFile, err := os.OpenFile(dest, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0o600)
+	if err != nil {
+		panic(err)
+	}
+	io.Copy(destFile, srcFile)
 }
 
 func main() {
@@ -94,7 +108,7 @@ func main() {
 
 	var metaPackageJson PackageJson
 	unmarshal("package.json", &metaPackageJson)
-	metaPackageJson.PeerDependencies = map[string]string{}
+	metaPackageJson.OptionalDependencies = map[string]string{}
 
 	for _, arch := range arches {
 		if arch.BinaryName == "" {
@@ -117,12 +131,14 @@ func main() {
 		archPackageJson.Bin = map[string]string{"greenjs": filepath.Join("bin", arch.BinaryName)}
 		archPackageJson.OS = []string{arch.OS}
 		archPackageJson.CPU = []string{arch.CPU}
-		metaPackageJson.PeerDependencies[archPackageJson.Name] = archPackageJson.Version
-		cmd := exec.Command("go", "build", "-o", filepath.Join("dist", arch.GOOS+"-"+arch.CPU, "bin", arch.BinaryName))
+		metaPackageJson.OptionalDependencies[archPackageJson.Name] = archPackageJson.Version
+		cmd := exec.Command("go", "build", "-o", filepath.Join("dist", arch.GOOS+"-"+arch.CPU, "bin", arch.BinaryName), "../../main.go")
 		cmd.Env = append(os.Environ(), "GOOS="+arch.GOOS, "GOARCH="+arch.GOARCH)
-		out, err := cmd.CombinedOutput()
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err = cmd.Run()
 		if err != nil {
-			panic(errors.Wrap(err, string(out)))
+			panic(err)
 		}
 		publishPackageJson(filepath.Join("dist", arch.GOOS+"-"+arch.CPU, "package.json"), archPackageJson)
 
@@ -132,5 +148,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	copyFile("postinstall.js", "dist/base/postinstall.js")
+	copyFile("main.js", "dist/base/main.js")
 	publishPackageJson(filepath.Join("dist", "base", "package.json"), metaPackageJson)
 }

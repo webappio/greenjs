@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
 	"github.com/pkg/errors"
 	"log"
@@ -106,12 +107,16 @@ func (p *Prerenderer) Render(ctx context.Context, pagePath, fileBaseName string)
 
 	var bodyContents string
 	var routes []string
+	var success bool
 	var cssRules string
 	var extraHead string
 
 	err = chromedp.Run(
 		ctx,
 		chromedp.Navigate(p.URI+pagePath),
+		chromedp.Evaluate("Promise.all(Object.values(window._GreenJSPromises || {})).then(x => x.reduce((a, b) => a && b, true))", &success, func(p *runtime.EvaluateParams) *runtime.EvaluateParams {
+			return p.WithAwaitPromise(true)
+		}),
 		chromedp.OuterHTML("body", &bodyContents, chromedp.ByQuery),
 		chromedp.Evaluate("Object.keys(window._GreenJSRoutes || {})", &routes),
 		chromedp.Evaluate("[...document.styleSheets].flatMap(x => [...x.cssRules]).map(x => x.cssText).join(' ');", &cssRules),
