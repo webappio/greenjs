@@ -32,6 +32,40 @@ const RouteContext = React.createContext({
     getMatchingRoute: route => null,
 });
 
+const RouteView = ({route, routePath}) => {
+    const [currContents, setCurrContents] = React.useState(null);
+    const [currRoutePath, setCurrRoutePath] = React.useState(null);
+
+    if(route?.props?.asyncPage) {
+        if(window._GreenJSAsyncPages && window._GreenJSAsyncPages[routePath]) {
+            let Page = window._GreenJSAsyncPages[routePath];
+            if(currRoutePath !== routePath) {
+                setCurrContents(<Page />);
+                setCurrRoutePath(routePath);
+            }
+            return <Page />;
+        }
+        let importPromise = new Promise(resolve => {
+            route?.props?.asyncPage().then(page => {
+                window._GreenJSAsyncPages = {...(window._GreenJSAsyncPages || {}), [routePath]: page.default}
+                let Page = page.default;
+                setCurrContents(<Page />);
+                setCurrRoutePath(routePath);
+                resolve(true);
+            })
+        });
+        window._GreenJSPromises = {...(window._GreenJSPromises || {}), [routePath]: importPromise};
+    } else {
+        if(currRoutePath !== routePath) {
+            setCurrContents(route);
+            setCurrRoutePath(routePath);
+        }
+        return route;
+    }
+
+    return currContents;
+}
+
 const Router = ({children}) => {
     if (typeof children === "object" && children?.props?.path) {
         children = [children];
@@ -40,9 +74,7 @@ const Router = ({children}) => {
         throw new Error("Invalid Router children, expected a list of Route")
     }
 
-    const [currRoute, setCurrRoute] = React.useState(null);
     const [pathname, setPathname] = React.useState(window.location.pathname);
-    const [routeContents, setRouteContents] = React.useState(null);
     if(!window._GreenJsPushStatePatched) {
         window._GreenJsPushStatePatched = true;
         window.history.pushState = new Proxy(window.history.pushState, {
@@ -79,25 +111,12 @@ const Router = ({children}) => {
         return null;
     }
 
-    if(result?.reactEl?.props?.asyncPage) {
-        let importPromise = new Promise(resolve => {
-            result?.reactEl?.props?.asyncPage().then(page => {
-                window._GreenJSAsyncPages = {...(window._GreenJSAsyncPages || {}), [result?.matchResult.routePath]: page.default}
-                setRouteContents(page.default);
-                resolve(true);
-            })
-        });
-        window._GreenJSPromises = {...(window._GreenJSPromises || {}), [result?.matchResult.routePath]: importPromise};
-    } else {
-        setRouteContents(result?.reactEl);
-    }
-
     return <RouteContext.Provider value={{
         params: result.matchResult.params,
         routePath: result.matchResult.routePath,
         getMatchingRoute: path => getBestRoute(path),
     }}>
-        {routeContents}
+        <RouteView route={result?.reactEl} routePath={result?.matchResult.routePath} />
     </RouteContext.Provider>;
 }
 
