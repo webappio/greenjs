@@ -50,14 +50,11 @@ func Build(args []string) {
 		log.Println("Started server!")
 	}()
 
-	wg.Add(1)
 	go func() {
 		err := prerenderer.Start()
 		if err != nil {
 			log.Fatal(err)
 		}
-		wg.Done()
-		log.Println("Started prerenderer!")
 	}()
 
 	wg.Add(1)

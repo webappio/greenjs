@@ -108,7 +108,7 @@ func (p *Prerenderer) Render(ctx context.Context, pagePath, fileBaseName string)
 	var bodyContents string
 	var routes []string
 	var success bool
-	var cssRules string
+	var cssRules []string
 	var extraHead string
 
 	err = chromedp.Run(
@@ -119,7 +119,7 @@ func (p *Prerenderer) Render(ctx context.Context, pagePath, fileBaseName string)
 		}),
 		chromedp.OuterHTML("body", &bodyContents, chromedp.ByQuery),
 		chromedp.Evaluate("Object.keys(window._GreenJSRoutes || {})", &routes),
-		chromedp.Evaluate("[...document.styleSheets].flatMap(x => [...x.cssRules]).map(x => x.cssText).join(' ');", &cssRules),
+		chromedp.Evaluate("[...document.styleSheets].flatMap(x => [...x.cssRules]).map(x => x.cssText);", &cssRules),
 		chromedp.Evaluate(`[...document.head.querySelectorAll(":not(script):not(style)")].map(x => x.outerHTML).join("\n")`, &extraHead),
 	)
 	if err != nil {
@@ -128,7 +128,7 @@ func (p *Prerenderer) Render(ctx context.Context, pagePath, fileBaseName string)
 
 	htmlDestFile.Write([]byte("<!DOCTYPE html>\n<html>\n<head>\n"))
 	if len(cssRules) > 0 {
-		cssDestFile.Write([]byte(cssRules))
+		cssDestFile.Write([]byte(strings.Join(cssRules, "\n")))
 		htmlDestFile.Write([]byte(`<link rel="stylesheet" href="/`+strings.TrimPrefix(fileBaseName, "dist/")+`.css" class="from-greenjs">`+"\n"))
 	}
 	htmlDestFile.Write([]byte(extraHead))
