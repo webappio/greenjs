@@ -4,7 +4,7 @@
   "dependencies": {
     "@greenio/head": "0.0.6",
     "@greenio/react": "0.0.4",
-    "@greenio/router": "0.0.7",
+    "@greenio/router": "0.0.10",
     "@mui/material": "^5.2.5",
     "hamburger-react": "^2.4.1",
     "react": "^17.0.2",

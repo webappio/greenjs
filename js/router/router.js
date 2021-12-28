@@ -80,7 +80,9 @@ const Router = ({children}) => {
         window.history.pushState = new Proxy(window.history.pushState, {
             apply: (target, thisArg, argArray) => {
                 const res = target.apply(thisArg, argArray);
-                setPathname(window.location.pathname);
+                for(let listener of (window._GreenJsPushStateListeners || [])) {
+                    listener(window.location.pathname);
+                }
                 return res;
             },
         });
@@ -88,6 +90,14 @@ const Router = ({children}) => {
     window.addEventListener("popstate", e => {
         setPathname(window.location.pathname);
     })
+
+    useEffect(() => {
+        const listener = (x) => setPathname(x);
+        window._GreenJsPushStateListeners = [...(window._GreenJsPushStateListeners || []), listener];
+        return () => {
+            window._GreenJsPushStateListeners = window._GreenJsPushStateListeners.filter(x => x !== listener);
+        }
+    }, [])
 
     const getBestRoute = path => {
         let bestMatchResult = null;
@@ -126,12 +136,10 @@ const Route = ({path, asyncPage, children}) => {
         if(Loaded) {
             return <Loaded />
         }
-        const E = React.lazy(() => {
-            let importPromise = asyncPage();
-            importPromise.then(page => {
-                window._GreenJSAsyncPages = {...(window._GreenJSAsyncPages || {}), [path]: page.default}
-            });
-            return importPromise;
+        const E = React.lazy(async () => {
+            let importResult = await asyncPage();
+            window._GreenJSAsyncPages = {...(window._GreenJSAsyncPages || {}), [path]: importResult.default}
+            return importResult;
         });
         return <React.Suspense fallback={<></>}>
             <E/>
