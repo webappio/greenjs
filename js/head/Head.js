@@ -60,7 +60,14 @@ class headState {
         for(let {type, attrs, innerText} of elements) {
             const domElement = document.createElement(type);
             if(innerText) {
-                domElement.innerText = innerText;
+                if(type === "script") {
+                    domElement.innerHTML = innerText;
+                    if(!attrs.type) {
+                        attrs.type = "text/javascript";
+                    }
+                } else {
+                    domElement.innerText = innerText;
+                }
             }
             for(let attr of Object.keys(attrs ?? {})) {
                 if(typeof attr === "boolean") {

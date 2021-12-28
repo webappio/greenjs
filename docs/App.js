@@ -12,6 +12,14 @@ const Site = () => {
 			<meta name="cache-control" content="public" />
 			<link rel="stylesheet" href="/App.css" />
 			<meta name="viewport" content="width=device-width, initial-scale=1" />
+			<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143014279-2" />
+			<script>{`
+					window.dataLayer = window.dataLayer || [];
+					function gtag(){dataLayer.push(arguments);}
+					gtag('js', new Date());
+					gtag('config', 'UA-143014279-2');
+			`}
+			</script>
 		</Head>
 		<Router>
 			<Route path="/docs/basics" asyncPage={() => import("./src/topics/getting-started/basics")} />
