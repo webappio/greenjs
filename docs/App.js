@@ -12,12 +12,13 @@ const Site = () => {
 			<meta name="cache-control" content="public" />
 			<link rel="stylesheet" href="/App.css" />
 			<meta name="viewport" content="width=device-width, initial-scale=1" />
-			<script async src="https://www.googletagmanager.com/gtag/js?id=UA-143014279-2" />
+			<script async src="https://www.googletagmanager.com/gtag/js?id=G-8QM8LHVH3P" />
 			<script>{`
-					window.dataLayer = window.dataLayer || [];
-					function gtag(){dataLayer.push(arguments);}
-					gtag('js', new Date());
-					gtag('config', 'UA-143014279-2');
+				window.dataLayer = window.dataLayer || [];
+				function gtag(){dataLayer.push(arguments);}
+				gtag('js', new Date());
+
+				gtag('config', 'G-8QM8LHVH3P');
 			`}
 			</script>
 		</Head>
