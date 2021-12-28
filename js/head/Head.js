@@ -97,38 +97,42 @@ const Head = ({children}) => {
             delete window._gjsHeadState.tags[innerTag];
             window._gjsHeadState.regenerateHead();
         }
-    }, [])
+    }, []);
+
+    let childrenList = [];
+    if(!children) {
+        childrenList = [];
+    } if(typeof children.length === "number") {
+        childrenList = [...children];
+    } else if(typeof children.props !== "undefined") {
+        childrenList = [children];
+    } else {
+        throw new Error("Invalid contents for Head tag, expected list of elements, got "+children);
+    }
+    const elements = childrenList.map(({type, props: {children, ...attrs}}) => {
+        if(typeof type !== "string") {
+            throw new Error("Invalid contents for Head tag, all components must be simple html")
+        }
+        let element = {type};
+        if(children) {
+            if(typeof children !== "string") {
+                throw new Error("Invalid contents for Head tag element: "+children);
+            }
+            element.innerText = children;
+        }
+        element.attrs = {...attrs};
+        return element;
+    });
 
     React.useEffect(() => {
-        if(!children || !tag) {
+        if(elements.length === 0 || !tag) {
             return;
         }
-        let childrenList = [];
-        if(typeof children.length === "number") {
-            childrenList = [...children];
-        } else if(typeof children.props !== "undefined") {
-            childrenList = [children];
-        } else {
-            throw new Error("Invalid contents for Head tag, expected list of elements, got "+children);
-        }
 
-        window._gjsHeadState.tags[tag] = childrenList.map(({type, props: {children, ...attrs}}) => {
-            if(typeof type !== "string") {
-                throw new Error("Invalid contents for Head tag, all components must be simple html")
-            }
-            let element = {type};
-            if(children) {
-                if(typeof children !== "string") {
-                    throw new Error("Invalid contents for Head tag element: "+children);
-                }
-                element.innerText = children;
-            }
-            element.attrs = {...attrs};
-            return element;
-        });
+        window._gjsHeadState.tags[tag] = elements;
         window._gjsHeadState.regenerateHead();
 
-    }, [children, tag]);
+    }, [JSON.stringify(elements), tag]);
     return null;
 }
 

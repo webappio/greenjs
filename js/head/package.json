@@ -1,6 +1,6 @@
 {
   "name": "@greenio/head",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Embed your <head> tag directly into your React code",
   "main": "Head.js",
   "private": false,
