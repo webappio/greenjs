@@ -3,6 +3,7 @@ package cmd
 import (
 	"flag"
 	"github.com/pkg/errors"
+	"github.com/webappio/greenjs/go/config"
 	"log"
 	"net"
 	"os"
@@ -22,12 +23,24 @@ func Start(args []string) {
 	flags.StringVar(&upstreamAddr, "upstream-addr", "", "the upstream server to forward requests to (e.g., localhost:8080)")
 	flags.Parse(args)
 
+	conf := config.Defaults()
+	err := conf.Read("greenjs.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	buildOpts, err := conf.ToBuildOptions(false)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	listener, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println("Server is listening at ", listenAddr)
 	err = (&GreenJsServer{
 		UpstreamHost: upstreamAddr,
+		BuildOpts: &buildOpts,
 	}).Serve(listener)
 	if err != nil {
 		log.Fatal(err)

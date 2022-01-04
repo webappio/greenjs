@@ -27,11 +27,8 @@ type GreenJsServer struct {
 }
 
 func (srv *GreenJsServer) Serve(listener net.Listener) error {
-	if srv.BuildOpts == nil {
-		srv.BuildOpts = &DefaultBuildOptions
-	}
 	result, err := api.Serve(api.ServeOptions{
-		Servedir: "dist",
+		Servedir: srv.BuildOpts.Outdir,
 	}, *srv.BuildOpts)
 	if err != nil {
 		return errors.Wrap(err, "could not start eslint server")

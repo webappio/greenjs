@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/evanw/esbuild/pkg/api"
+	"github.com/webappio/greenjs/go/config"
 	"io/ioutil"
 	"log"
 	"net"
@@ -13,14 +14,19 @@ import (
 )
 
 func Build(args []string) {
-	distDir := "dist"
-	buildOpts := DefaultBuildOptions
-	buildOpts.MinifyWhitespace = true
-	buildOpts.MinifySyntax = true
-	buildOpts.MinifyIdentifiers = true
-	buildOpts.Define["GreenJsHydrating"] = "true"
+	conf := config.Defaults()
+	err := conf.Read("greenjs.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	buildOpts, err := conf.ToBuildOptions(false)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	prerenderer := &Prerenderer{}
+	prerenderer := &Prerenderer{
+		Config: conf,
+	}
 	var greenJsServer *GreenJsServer
 	var listener net.Listener
 
@@ -34,10 +40,13 @@ func Build(args []string) {
 		}
 
 		prerenderer.URI = "http://127.0.0.1:" + fmt.Sprint(listener.Addr().(*net.TCPAddr).Port)
-		greenJsServer = &GreenJsServer{PageIsRoute: func(s string) bool {
+		greenJsServer = &GreenJsServer{
+			PageIsRoute: func(s string) bool {
 			_, ok := prerenderer.pagesVisited.Load(s)
 			return ok
-		}}
+			},
+			BuildOpts: &buildOpts,
+		}
 
 		go func() {
 			err := greenJsServer.Serve(listener)
@@ -77,7 +86,7 @@ func Build(args []string) {
 	defer greenJsServer.Stop()
 
 	log.Println("Rendering pages...")
-	err := prerenderer.RenderAll()
+	err = prerenderer.RenderAll()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -93,7 +102,7 @@ func Build(args []string) {
 		log.Fatal(err)
 	}
 
-	err = ioutil.WriteFile(filepath.Join(distDir, "routes.json"), marshalledPages, 0o600)
+	err = ioutil.WriteFile(filepath.Join(buildOpts.Outdir, "routes.json"), marshalledPages, 0o600)
 	if err != nil {
 		log.Fatal(err)
 	}

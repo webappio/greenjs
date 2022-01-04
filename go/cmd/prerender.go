@@ -5,6 +5,7 @@ import (
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
 	"github.com/pkg/errors"
+	"github.com/webappio/greenjs/go/config"
 	"log"
 	"os"
 	"path/filepath"
@@ -15,6 +16,7 @@ import (
 
 type Prerenderer struct {
 	URI string
+	Config config.GreenJSConfig
 
 	browserCtx context.Context
 	cancel context.CancelFunc
@@ -39,7 +41,7 @@ func (p *Prerenderer) Cancel() {
 
 func (p *Prerenderer) RenderAll() error {
 	p.pagesVisited.Store("/", true)
-	err := p.RenderToFile(p.browserCtx, "/", "dist/index")
+	err := p.RenderToFile(p.browserCtx, "/", filepath.Join(p.Config.ESBuildConfig.OutDir, "index"))
 	if err != nil {
 		return err
 	}
@@ -48,7 +50,7 @@ func (p *Prerenderer) RenderAll() error {
 
 	var queueMutex sync.Mutex
 	queueCond := sync.NewCond(&queueMutex)
-	queueTasks := int32(20)
+	queueTasks := p.Config.ParallelTasks
 
 	for anyVisited {
 		anyVisited = false
@@ -62,7 +64,7 @@ func (p *Prerenderer) RenderAll() error {
 				}
 				atomic.AddInt32(&queueTasks, -1)
 				queueMutex.Unlock()
-				renderErr := p.RenderToFile(p.browserCtx, pagePath.(string), "dist/"+strings.Trim(pagePath.(string), "/"))
+				renderErr := p.RenderToFile(p.browserCtx, pagePath.(string), filepath.Join(p.Config.ESBuildConfig.OutDir, strings.Trim(pagePath.(string), "/")))
 				if renderErr != nil {
 					err = renderErr
 				}
@@ -143,7 +145,11 @@ func (p *Prerenderer) Render(ctx context.Context, pagePath, fileBaseName string)
 	htmlDestFile.Write([]byte("<!DOCTYPE html>\n<html>\n<head>\n"))
 	if len(cssRules) > 0 {
 		cssDestFile.Write([]byte(strings.Join(cssRules, "\n")))
-		htmlDestFile.Write([]byte(`<link rel="stylesheet" href="/`+strings.TrimPrefix(fileBaseName, "dist/")+`.css" class="from-greenjs">`+"\n"))
+		rel, err := filepath.Rel(p.Config.ESBuildConfig.OutDir, fileBaseName)
+		if err != nil {
+			return nil, errors.Wrap(err, "could not get css output relative directory")
+		}
+		htmlDestFile.Write([]byte(`<link rel="stylesheet" href="/`+rel+`.css" class="from-greenjs">`+"\n"))
 	}
 	htmlDestFile.Write([]byte(extraHead))
 	htmlDestFile.Write([]byte("\n</head>\n"))
