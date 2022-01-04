@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
 )
 
 type Prerenderer struct {
@@ -44,17 +45,30 @@ func (p *Prerenderer) RenderAll() error {
 	}
 	wg := sync.WaitGroup{}
 	anyVisited := true
+
+	var queueMutex sync.Mutex
+	queueCond := sync.NewCond(&queueMutex)
+	queueTasks := int32(20)
+
 	for anyVisited {
 		anyVisited = false
 		p.pagesToVisit.Range(func(pagePath, _ interface{}) bool {
 			wg.Add(1)
 			anyVisited = true
 			go func() {
+				queueMutex.Lock()
+				for queueTasks == 0 {
+					queueCond.Wait()
+				}
+				atomic.AddInt32(&queueTasks, -1)
+				queueMutex.Unlock()
 				renderErr := p.RenderToFile(p.browserCtx, pagePath.(string), "dist/"+strings.Trim(pagePath.(string), "/"))
 				if renderErr != nil {
 					err = renderErr
 				}
 				wg.Done()
+				atomic.AddInt32(&queueTasks, 1)
+				queueCond.Signal()
 			}()
 			p.pagesToVisit.Delete(pagePath)
 			return true
