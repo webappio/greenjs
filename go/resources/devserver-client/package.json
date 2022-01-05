@@ -1,0 +1,22 @@
+{
+  "name": "devserver-client",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "esbuild devserver-client.js --bundle --loader:.js=jsx --minify --outfile=dist/out.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "The GreenJS Authors",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/webappio/greenjs/issues"
+  },
+  "homepage": "https://github.com/webappio/greenjs#readme",
+  "dependencies": {
+    "react": ">=16.8",
+    "react-dom": ">=16.8"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.10"
+  }
+}

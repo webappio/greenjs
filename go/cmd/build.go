@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/webappio/greenjs/go/config"
+	"github.com/webappio/greenjs/go/devserver"
 	"io/ioutil"
 	"log"
 	"net"
@@ -27,7 +28,7 @@ func Build(args []string) {
 	prerenderer := &Prerenderer{
 		Config: conf,
 	}
-	var greenJsServer *GreenJsServer
+	var greenJsServer *devserver.GreenJsServer
 	var listener net.Listener
 
 	wg := sync.WaitGroup{}
@@ -40,7 +41,7 @@ func Build(args []string) {
 		}
 
 		prerenderer.URI = "http://127.0.0.1:" + fmt.Sprint(listener.Addr().(*net.TCPAddr).Port)
-		greenJsServer = &GreenJsServer{
+		greenJsServer = &devserver.GreenJsServer{
 			PageIsRoute: func(s string) bool {
 			_, ok := prerenderer.pagesVisited.Load(s)
 			return ok

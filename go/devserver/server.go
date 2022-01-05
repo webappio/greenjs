@@ -1,4 +1,4 @@
-package cmd
+package devserver
 
 import (
 	"context"
@@ -6,17 +6,27 @@ import (
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/pkg/errors"
 	"github.com/webappio/greenjs/go/resources"
+	"github.com/fsnotify/fsnotify"
+	"io/fs"
+	"log"
 	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"path/filepath"
+	"strings"
 	"sync"
 )
+
+var errNotFound = errors.New("not found")
 
 type GreenJsServer struct {
 	UpstreamHost string
 	BuildOpts *api.BuildOptions
 	PageIsRoute func(string) bool
+	InjectDevSidebar bool
+
+	fileChangeListeners sync.Map
 
 	server *http.Server
 
@@ -38,14 +48,14 @@ func (srv *GreenJsServer) Serve(listener net.Listener) error {
 		Setup: func(build api.PluginBuild) {
 			build.OnEnd(func(result *api.BuildResult) {
 				srv.errMessagesMutex.Lock()
-				defer srv.errMessagesMutex.Unlock()
 				srv.errMessages = result.Errors
+				srv.errMessagesMutex.Unlock()
 			})
 		},
 	})
 
 	result, err := api.Serve(api.ServeOptions{
-		Servedir: srv.BuildOpts.Outdir,
+		Servedir: opts.Outdir,
 	}, opts)
 	if err != nil {
 		return errors.Wrap(err, "could not start eslint server")
@@ -82,6 +92,41 @@ func (srv *GreenJsServer) Serve(listener net.Listener) error {
 		rw.Write([]byte("error")) //TODO make prettier
 	}
 
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer watcher.Close()
+	go func() {
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+				if event.Op&fsnotify.Write == fsnotify.Write {
+					srv.fileChangeListeners.Range(func(key, value interface{}) bool {
+						value.(func())()
+						return true
+					})
+				} else if event.Op&fsnotify.Create == fsnotify.Create {
+					watcher.Add(event.Name)
+				}
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+				log.Println("error:", err)
+			}
+		}
+	}()
+	err = filepath.WalkDir(filepath.Dir(srv.BuildOpts.EntryPoints[0]), func(path string, d fs.DirEntry, err error) error {
+		return watcher.Add(path)
+	})
+	if err != nil {
+		log.Print(err)
+	}
+
 	server := http.Server{Handler: srv}
 	err = server.Serve(listener)
 	if srv.stopped {
@@ -103,6 +148,31 @@ func (srv *GreenJsServer) Stop() {
 }
 
 func (srv *GreenJsServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	if req.URL.Path == "/greenjs-dev-connection" {
+		srv.HandleWS(rw, req)
+		return
+	}
+	if req.URL.Path == "/greenjs-devserver-client.js" {
+		rw.Header().Set("Content-Type", "text/javascript")
+		res := api.Build(api.BuildOptions{
+			Write: false,
+			Bundle: true,
+			MinifySyntax: true,
+			MinifyWhitespace: true,
+			Stdin: &api.StdinOptions{
+				Contents:   string(resources.DevserverClientContents),
+				Loader: api.LoaderJSX,
+			},
+		})
+		for _, err := range res.Errors {
+			log.Println(err.Text)
+			log.Println(err.Notes)
+		}
+		if len(res.OutputFiles) == 1 {
+			rw.Write(res.OutputFiles[0].Contents)
+		}
+		return
+	}
 	isIndex := req.URL.Path == "/"
 	if srv.PageIsRoute != nil {
 		isIndex = isIndex || srv.PageIsRoute(req.URL.Path)
@@ -112,9 +182,16 @@ func (srv *GreenJsServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		srv.errMessagesMutex.Lock()
 		hasErrors = len(srv.errMessages) > 0
 		srv.errMessagesMutex.Unlock()
-		rw.Header().Set("Content-Type", "text/html")
 		if !hasErrors {
-			rw.Write(resources.IndexHTML)
+			devScript := ""
+			if srv.InjectDevSidebar {
+				devScript = `<div id="greenjs-client-element"></div><script src="/greenjs-devserver-client.js" type="module"></script>`
+			}
+			rw.Header().Set("Content-Type", "text/html")
+			rw.Write([]byte(strings.NewReplacer(
+				"<!-- dev script-->", devScript,
+				"App.js", srv.BuildOpts.EntryPoints[0],
+				).Replace(string(resources.IndexHTML))))
 			return
 		}
 	}

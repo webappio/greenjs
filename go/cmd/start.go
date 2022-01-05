@@ -3,14 +3,12 @@ package cmd
 import (
 	"flag"
 	"fmt"
-	"github.com/pkg/errors"
 	"github.com/webappio/greenjs/go/config"
+	"github.com/webappio/greenjs/go/devserver"
 	"log"
 	"net"
 	"os"
 )
-
-var errNotFound = errors.New("not found")
 
 func Start(args []string) {
 	flags := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
@@ -39,9 +37,10 @@ func Start(args []string) {
 		log.Fatal(err)
 	}
 	fmt.Println("Server is listening at", listenAddr)
-	err = (&GreenJsServer{
+	err = (&devserver.GreenJsServer{
 		UpstreamHost: upstreamAddr,
 		BuildOpts: &buildOpts,
+		InjectDevSidebar: true,
 	}).Serve(listener)
 	if err != nil {
 		log.Fatal(err)
