@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"sync"
 )
 
 type GreenJsServer struct {
@@ -23,13 +24,29 @@ type GreenJsServer struct {
 	stopBuildServer func ()
 	stopped bool
 
+	errMessagesMutex sync.Mutex
+	errMessages []api.Message
+
 	reverseProxy *httputil.ReverseProxy
 }
 
 func (srv *GreenJsServer) Serve(listener net.Listener) error {
+	opts := *srv.BuildOpts
+
+	opts.Plugins = append(opts.Plugins, api.Plugin{
+		Name:  "server",
+		Setup: func(build api.PluginBuild) {
+			build.OnEnd(func(result *api.BuildResult) {
+				srv.errMessagesMutex.Lock()
+				defer srv.errMessagesMutex.Unlock()
+				srv.errMessages = result.Errors
+			})
+		},
+	})
+
 	result, err := api.Serve(api.ServeOptions{
 		Servedir: srv.BuildOpts.Outdir,
-	}, *srv.BuildOpts)
+	}, opts)
 	if err != nil {
 		return errors.Wrap(err, "could not start eslint server")
 	}
@@ -91,9 +108,15 @@ func (srv *GreenJsServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		isIndex = isIndex || srv.PageIsRoute(req.URL.Path)
 	}
 	if isIndex {
+		hasErrors := false
+		srv.errMessagesMutex.Lock()
+		hasErrors = len(srv.errMessages) > 0
+		srv.errMessagesMutex.Unlock()
 		rw.Header().Set("Content-Type", "text/html")
-		rw.Write(resources.IndexHTML)
-		return
+		if !hasErrors {
+			rw.Write(resources.IndexHTML)
+			return
+		}
 	}
 	req.Header.Set("X-Forwarded-Host", req.Host)
 	req.Header.Set("X-Forwarded-Proto", req.Proto)
