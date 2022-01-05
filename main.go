@@ -22,6 +22,8 @@ func main() {
 	switch flags.Arg(0) {
 	case "build":
 		cmd.Build(flags.Args()[1:])
+	case "eject":
+		cmd.Eject(flags.Args()[1:])
 	case "start":
 		cmd.Start(flags.Args()[1:])
 	default:
