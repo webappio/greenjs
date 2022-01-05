@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func Eject(args []string) {
+func Genconfig(args []string) {
 	if _, err := os.Stat("greenjs.json"); err == nil {
 		log.Fatal("greenjs.json already exists. Delete it in order to re-eject.")
 	} else if !os.IsNotExist(err) {

@@ -8,7 +8,7 @@ import (
 )
 
 func printUsage() {
-	fmt.Fprintf(os.Stderr, "usage: %v [build|start]\n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "usage: %v [build|start|genconfig]\n", os.Args[0])
 	os.Exit(1)
 }
 
@@ -22,8 +22,8 @@ func main() {
 	switch flags.Arg(0) {
 	case "build":
 		cmd.Build(flags.Args()[1:])
-	case "eject":
-		cmd.Eject(flags.Args()[1:])
+	case "genconfig":
+		cmd.Genconfig(flags.Args()[1:])
 	case "start":
 		cmd.Start(flags.Args()[1:])
 	default:

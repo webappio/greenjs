@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"flag"
+	"fmt"
 	"github.com/pkg/errors"
 	"github.com/webappio/greenjs/go/config"
 	"log"
@@ -37,7 +38,7 @@ func Start(args []string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Server is listening at ", listenAddr)
+	fmt.Println("Server is listening at", listenAddr)
 	err = (&GreenJsServer{
 		UpstreamHost: upstreamAddr,
 		BuildOpts: &buildOpts,

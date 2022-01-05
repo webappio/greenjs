@@ -39,8 +39,8 @@ type ESBuildConfig struct {
 	EntryPointName   string             `json:"entry_point_name"`
 	FileImportTypes  map[string]string  `json:"file_import_types"`
 	OutDir           string             `json:"out_dir"`
-	MinifyWhitespace EnvironmentBoolean `json:"no_minify_whitespace"`
-	MinifySyntax     EnvironmentBoolean `json:"no_minify_syntax"`
+	MinifyWhitespace EnvironmentBoolean `json:"minify_whitespace"`
+	MinifySyntax     EnvironmentBoolean `json:"minify_syntax"`
 }
 
 type GreenJSConfig struct {
