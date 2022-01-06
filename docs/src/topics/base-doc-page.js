@@ -31,10 +31,10 @@ function Sidebar() {
         <div className="px-3 d-flex pb-8 max-h-[calc(100vh-6rem)] w-full overflow-y-auto">
             <h3 className="text-md font-bold">Getting Started</h3>
             <div className="border-l-2 border-slate-200 mt-2 mb-8 ml-1 flex flex-col">
-                <SidebarLink href="/docs/basics">The basics</SidebarLink>
+                <SidebarLink href="/docs/getting-started">Getting started</SidebarLink>
                 <SidebarLink href="/docs/hosting">Hosting</SidebarLink>
                 <SidebarLink href="/docs/examples">Examples</SidebarLink>
-                <SidebarLink href="/docs/core-concepts">Core Concepts</SidebarLink>
+                <SidebarLink href="/docs/why">Why GreenJS</SidebarLink>
             </div>
 
             <h3 className="text-md font-bold">Components</h3>
@@ -67,7 +67,7 @@ function Sidebar() {
 
 export function DocBase({children}) {
     const [drawerOpen, setDrawerOpen] = React.useState(false);
-    return <div className="flex">
+    return <div className="flex mb-16">
         <HideOnScroll>
             <AppBar
                 color="inherit"

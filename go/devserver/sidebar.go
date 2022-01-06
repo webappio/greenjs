@@ -28,7 +28,6 @@ func (srv *GreenJsServer) HandleWS(rw http.ResponseWriter, req *http.Request) {
 
 	ourId := atomic.AddInt32(&wsId, 1)
 	srv.fileChangeListeners.Store(ourId, func() {
-		log.Print("New change detected")
 		protoState.LastChange = time.Now()
 		ws.WriteJSON(&protoState)
 	})

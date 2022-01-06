@@ -30,16 +30,26 @@ export default function Landing() {
         </Head>
         <Navbar />
         <div className="container flex flex-col my-8 items-center px-6 max-w-full md:max-w-[75%] md:my-20 lg:my-32">
-            <h1 className="text-4xl font-bold text-center"><span className="bg-gradient-to-br bg-clip-text text-transparent from-green-500 to-green-600">Blazingly</span> fast pre-rendered React sites</h1>
-            <p className="text-3xl text-center my-12">GreenJS makes sites load faster by sending content before any javascript loads.</p>
-            <Link
-                href="/docs/basics"
-                className="flex items-center justify-center text-white
-                bg-gradient-to-br from-green-600 to-green-700 rounded-lg py-3 px-5 text-3xl
-                hover:from-green-800 hover:to-green-1000"
-            >
-                <img src="/static/images/book-open.svg" height="30" width="30" alt="" className="mr-4"/> Read the Docs
-            </Link>
+            <h1 className="text-4xl font-bold text-center"><span className="bg-gradient-to-br bg-clip-text text-transparent from-green-500 to-green-600">Blazingly</span> fast React sites with esbuild</h1>
+            <p className="text-3xl text-center my-12">GreenJS is as easy to use as create-react-app, and the page speed of a server-side rendering framework.</p>
+            <div className="flex space-x-6">
+                <Link
+                    href="/docs/getting-started"
+                    className="flex items-center justify-center text-white
+                    bg-gradient-to-br from-green-600 to-green-700 rounded-lg py-3 px-5 text-2xl
+                    hover:from-green-500 hover:to-green-600"
+                >
+                    Get Started
+                </Link>
+                <Link
+                    href="/docs/why"
+                    className="flex items-center justify-center text-green-600
+                    bg-white border border-green-500 rounded-lg py-3 px-5 text-2xl
+                    hover:bg-gradient-to-br from-green-500 to-green-600 hover:text-white"
+                >
+                    Learn More
+                </Link>
+            </div>
         </div>
         <div className="container flex flex-col px-6 mt-16 md:mt-28 items-center mx-6">
             <h5 className="uppercase font-bold bg-gradient-to-br bg-clip-text text-transparent from-green-500 to-green-600 text-3xl mt-20 mb-10 lg:mt-40 lg:mb-96">How to Get Started</h5>

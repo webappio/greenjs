@@ -23,10 +23,10 @@ const Site = () => {
 			</script>
 		</Head>
 		<Router>
-			<Route path="/docs/basics" asyncPage={() => import("./src/topics/getting-started/basics")} />
+			<Route path="/docs/getting-started" asyncPage={() => import("./src/topics/getting-started/getting-started")} />
 			<Route path="/docs/hosting" asyncPage={() => import("./src/topics/getting-started/hosting")} />
 			<Route path="/docs/examples" asyncPage={() => import("./src/topics/getting-started/examples")} />
-			<Route path="/docs/core-concepts" asyncPage={() => import("./src/topics/getting-started/core-concepts")} />
+			<Route path="/docs/why" asyncPage={() => import("./src/topics/getting-started/why")} />
 			<Route path="/docs/router" asyncPage={() => import("./src/topics/react-components/router")} />
 			<Route path="/docs/head" asyncPage={() => import("./src/topics/react-components/router")} />
 			<Route path="/docs/esbuild" asyncPage={() => import("./src/topics/configuration/esbuild")} />

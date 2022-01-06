@@ -9,7 +9,7 @@ export function Navbar() {
         <div className="flex text-lg font-bold uppercase items-center">
             <Link
                 className="mx-2 md:mx-8 hover:underline"
-                href="/docs/basics">Docs</Link>
+                href="/docs/getting-started">Docs</Link>
             <a className="mx-2 md:mx-8 hover:underline"
                href="https://join.slack.com/t/greenjs/shared_invite/zt-109by8mrn-p9gbRlSovBXvoM_5VZn31g">Community</a>
             <a className="mx-2 md:mx-8 hover:underline hidden md:block"
