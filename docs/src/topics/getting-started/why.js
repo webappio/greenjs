@@ -1,5 +1,5 @@
 import React from "react";
-import {DocBase, DocLink} from "../base-doc-page";
+import {DocBase, DocCmd, DocLink} from "../base-doc-page";
 
 export default function Page() {
     return <DocBase>
@@ -55,7 +55,7 @@ export default function Page() {
             GreenJS combines prerendering with several technologies in a way that's never been done before.
         </p>
         <h5 className="font-bold text-md my-2">
-            We build with ESBuild, it's 100x faster than parcel, webpack, or terser. See the benchmark below.
+            GreenJS uses ESBuild, it's 100x faster than parcel, webpack, or terser. See the benchmark below.
         </h5>
         <img
             src="/static/images/esbuild-benchmark.jpg"
@@ -65,20 +65,20 @@ export default function Page() {
             className="height-auto mw-full p-1"
         />
         <p className="mb-2">
-            If you've ever seen <code>npm run build</code> take 10+ minutes, you'll appreciate the speed up!
+            If you've ever seen <DocCmd>npm run build</DocCmd> take 10+ minutes, you'll appreciate the speed up!
         </p>
 
         <h5 className="font-bold text-md my-2">
-            Embracing good ideas in javascript libraries.
+            GreenJS embraces good ideas from existing libraries.
         </h5>
         <p className="mb-2">
             GreenJS comes with its own versions of <DocLink href="https://www.npmjs.com/package/react-router-dom">react-router-dom</DocLink>, <DocLink href="https://www.npmjs.com/package/react-helmet">react-helmet</DocLink>, and <DocLink href="https://github.com/turbolinks/turbolinks">Turbolinks</DocLink>:
-            <ul className="list-disc space-y-2 mt-2 ml-4">
-                <li><code>@greenio/router</code> allows you to create routes in Javascript, without needing to configure ExpressJS or putting your files in a specific directory.</li>
-                <li><code>@greenio/head</code> lets you change the &lt;head /> attribute of your site directly from React, it lets you write exclusively JavaScript, without needing to write any HTML.</li>
-                <li><code>@greenio/router</code> also comes with a Link attribute that loads the content of a page when you mouse over the link, so that it's instantly there the second you click.</li>
-            </ul>
         </p>
+        <ul className="list-disc space-y-2 mt-2 ml-4">
+            <li><DocCmd>@greenio/router</DocCmd> allows you to create routes in Javascript, without needing to configure ExpressJS or putting your files in a specific directory.</li>
+            <li><DocCmd>@greenio/head</DocCmd> lets you change the &lt;head /> attribute of your site directly from React, it lets you write exclusively JavaScript, without needing to write any HTML.</li>
+            <li><DocCmd>@greenio/router</DocCmd> also comes with a Link attribute that loads the content of a page when you mouse over the link, so that it's instantly there the second you click.</li>
+        </ul>
 
         <h5 className="font-bold text-md my-2">
             Developer experience comes first.
@@ -91,7 +91,7 @@ export default function Page() {
             Production ready with a high-performance webserver.
         </h5>
         <p className="mb-2">
-            Once you've built your application, all you have to do is <code>./dist/GreenJSServer</code> and you have a production-ready copy of your app.
+            Once you've built your application, all you have to do is <DocCmd>./dist/GreenJSServer</DocCmd> and you have a production-ready copy of your app.
         </p>
 
         <h5 className="font-bold text-md mt-4 mb-2">

@@ -16,8 +16,6 @@ function HideOnScroll({children}) {
     );
 }
 
-const drawerWidth = 240;
-
 function SidebarLink({children, ...props}) {
     return <Link
         className="border-transparent hover:border-blue-500 border-l-2 mb-1 pl-4"
@@ -27,11 +25,11 @@ function SidebarLink({children, ...props}) {
 }
 
 function Sidebar() {
-    return <div className="pt-[6rem] w-full">
+    return <div className="pt-[64px] w-full">
         <div className="px-3 d-flex pb-8 max-h-[calc(100vh-6rem)] w-full overflow-y-auto">
-            <h3 className="text-md font-bold">Getting Started</h3>
+            <h3 className="text-md font-bold mt-4">Getting Started</h3>
             <div className="border-l-2 border-slate-200 mt-2 mb-8 ml-1 flex flex-col">
-                <SidebarLink href="/docs/getting-started">Getting started</SidebarLink>
+                <SidebarLink href="/docs/getting-started">Quickstart</SidebarLink>
                 <SidebarLink href="/docs/hosting">Hosting</SidebarLink>
                 <SidebarLink href="/docs/examples">Examples</SidebarLink>
                 <SidebarLink href="/docs/why">Why GreenJS</SidebarLink>
@@ -105,10 +103,10 @@ export function DocBase({children}) {
         </HideOnScroll>
         <Drawer
             sx={{
-                width: drawerWidth,
+                width: "260px",
                 flexShrink: 0,
                 '& .MuiDrawer-paper': {
-                    width: drawerWidth,
+                    width: "260px",
                     boxSizing: 'border-box',
                     overflowY: "visible",
                 },
@@ -121,10 +119,10 @@ export function DocBase({children}) {
         >
             <Sidebar/>
         </Drawer>
-        <div className="hidden md:flex grow-0 shrink-0 basis-[240px]">
+        <div className="hidden md:flex width-[260px] fixed top-0">
             <Sidebar/>
         </div>
-        <div className="flex flex-col pt-28 px-4 sm:px-8 md:px-12 container">
+        <div className="flex flex-col ml-[260px] pt-28 px-4 sm:px-8 md:px-12 container">
             {children}
         </div>
     </div>

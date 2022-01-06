@@ -26,15 +26,16 @@ export function Footer() {
             <div className="flex flex-col sm:flex-row">
                 <div className="flex flex-col items-start sm:basis-1/2 my-5">
                     <h5 className="uppercase text-slate-200 mb-1">Docs</h5>
-                    <Link href="/docs/basics" className="text-white hover:underline">The basics</Link>
-                    <Link href="/docs/installation" className="text-white hover:underline">Installation</Link>
+                    <Link href="/docs/why" className="text-white hover:underline">Why GreenJS</Link>
+                    <Link href="/docs/getting-started" className="text-white hover:underline">Getting started</Link>
+                    <Link href="/docs/hosting" className="text-white hover:underline">Hosting</Link>
                     <Link href="/docs/examples" className="text-white hover:underline">Examples</Link>
-                    <Link href="/docs/core-concepts" className="text-white hover:underline">Core concepts</Link>
                 </div>
                 <div className="flex flex-col items-start basis-full sm:basis-1/2 my-5">
                     <h5 className="uppercase text-slate-200 mb-1">Comparisons</h5>
                     <Link href="/docs/nextjs-comparison" className="text-white hover:underline">NextJS</Link>
-                    <Link href="/docs/create-react-app-comparison" className="text-white hover:underline">create-react-app</Link>
+                    <Link href="/docs/create-react-app-comparison"
+                          className="text-white hover:underline">create-react-app</Link>
                 </div>
             </div>
             <div className="flex justify-between text-right text-sm border-t-2 pt-5 mt-2 border-slate-200">
