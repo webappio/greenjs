@@ -30,8 +30,8 @@ export default function Page() {
                     2. Server-side rendered react (such as NextJS)
                 </h5>
                 <p>
-                    Server-side react was designed to be more performant, but so far it's harder to develop for.
-                    See our comparisons page if you'd like to see concrete examples.
+                    Server-side react was designed to be more performant, but it's generally harder to develop code with.
+                    You need to write files in a certain structure, and you can't use existing APIs easily.
                 </p>
             </div>
             <img src="/static/images/server-side.svg" alt="Graph of server-side rendering" width="352" height="224"/>
