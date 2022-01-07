@@ -56,7 +56,6 @@ function Sidebar() {
             <h3 className="text-md font-bold">Configuration</h3>
             <div className="border-l-2 border-slate-200 mt-2 mb-8 ml-1 flex flex-col">
                 <SidebarLink href="/docs/esbuild">ESBuild options</SidebarLink>
-                <SidebarLink href="/docs/development">Development</SidebarLink>
                 <SidebarLink href="/docs/performance">Performance</SidebarLink>
                 <SidebarLink href="/docs/plugins">Plugins</SidebarLink>
             </div>
@@ -134,7 +133,7 @@ export function DocBase({children}) {
         <div className="hidden md:flex w-[240px] fixed top-0">
             <Sidebar/>
         </div>
-        <div className="flex flex-col ml-[240px] pt-28 px-4 sm:px-8 md:px-12 container">
+        <div className="flex flex-col md:ml-[240px] pt-28 px-4 sm:px-8 md:px-12 container">
             {children}
         </div>
     </div>

@@ -31,7 +31,6 @@ const Site = () => {
 			<Route path="/docs/router" asyncPage={() => import("./src/topics/react-components/router")} />
 			<Route path="/docs/head" asyncPage={() => import("./src/topics/react-components/header")} />
 			<Route path="/docs/esbuild" asyncPage={() => import("./src/topics/configuration/esbuild")} />
-			<Route path="/docs/development" asyncPage={() => import("./src/topics/configuration/development")} />
 			<Route path="/docs/performance" asyncPage={() => import("./src/topics/configuration/performance")} />
 			<Route path="/docs/plugins" asyncPage={() => import("./src/topics/configuration/plugins")} />
 			<Route path="/docs/tailwindcss" asyncPage={() => import("./src/topics/integrations/tailwindcss")} />
