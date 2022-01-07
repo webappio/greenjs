@@ -40,6 +40,18 @@ type GreenJsServer struct {
 	reverseProxy *httputil.ReverseProxy
 }
 
+func (srv *GreenJsServer) ServeBasicHTML(rw http.ResponseWriter, req *http.Request){
+	devScript := ""
+	if srv.InjectDevSidebar {
+		devScript = `<div id="greenjs-client-element"></div><script src="/greenjs-devserver-client.js" type="module"></script>`
+	}
+	rw.Header().Set("Content-Type", "text/html")
+	rw.Write([]byte(strings.NewReplacer(
+		"<!-- dev script-->", devScript,
+		"App.js", srv.BuildOpts.EntryPoints[0],
+	).Replace(string(resources.IndexHTML))))
+}
+
 func (srv *GreenJsServer) Serve(listener net.Listener) error {
 	opts := *srv.BuildOpts
 
@@ -76,13 +88,13 @@ func (srv *GreenJsServer) Serve(listener net.Listener) error {
 		}
 		return nil
 	}
-	srv.reverseProxy.ErrorHandler = func(rw http.ResponseWriter, request *http.Request, err error) {
+	srv.reverseProxy.ErrorHandler = func(rw http.ResponseWriter, req *http.Request, err error) {
 		if err == errNotFound {
 			if upstreamReverseProxy != nil {
-				upstreamReverseProxy.ServeHTTP(rw, request)
+				upstreamReverseProxy.ServeHTTP(rw, req)
 			} else {
-				rw.Header().Set("Content-Type", "text/html")
-				rw.Write(resources.IndexHTML)
+				srv.ServeBasicHTML(rw, req)
+				return
 			}
 			return
 		}
@@ -183,15 +195,7 @@ func (srv *GreenJsServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		hasErrors = len(srv.errMessages) > 0
 		srv.errMessagesMutex.Unlock()
 		if !hasErrors {
-			devScript := ""
-			if srv.InjectDevSidebar {
-				devScript = `<div id="greenjs-client-element"></div><script src="/greenjs-devserver-client.js" type="module"></script>`
-			}
-			rw.Header().Set("Content-Type", "text/html")
-			rw.Write([]byte(strings.NewReplacer(
-				"<!-- dev script-->", devScript,
-				"App.js", srv.BuildOpts.EntryPoints[0],
-				).Replace(string(resources.IndexHTML))))
+			srv.ServeBasicHTML(rw, req)
 			return
 		}
 	}

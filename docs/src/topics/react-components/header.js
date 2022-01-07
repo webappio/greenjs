@@ -29,7 +29,7 @@ export default function Page() {
     </script>
 </Head>
 `}</Code>
-        <h3 className="font-bold text-lg mt-6 mb-2">The &lt;Head> tags can be nested</h3>
+        <h3 className="font-bold text-lg mt-6 mb-2">&lt;Head> tags can be nested</h3>
         <p className="my-2">
             If you use the <Link href="/docs/router">Route</Link> component,
             you can override the &lt;Head> tag of the parent component with the inner component.

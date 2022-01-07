@@ -13,7 +13,8 @@
   },
   "scripts": {
     "build": "tailwindcss -i App.css -o ./dist/Site.css --minify && greenjs build",
-    "start": "mkdir -p dist && concurrently 'greenjs start' 'tailwindcss -i App.css -o ./dist/Site.css --watch'"
+    "start": "mkdir -p dist && concurrently 'greenjs start' 'tailwindcss -i App.css -o ./dist/Site.css --watch'",
+    "start-dev": "mkdir -p dist && concurrently 'go run ../main.go start' 'tailwindcss -i App.css -o ./dist/Site.css --watch'"
   },
   "devDependencies": {
     "@emotion/react": "^11.7.1",

@@ -54,6 +54,7 @@ const DevserverSidebar = ({open, onClose}) => {
         style={{
             width: open ? "180px" : "0px",
             overflowX: "hidden",
+            zIndex: "99999",
             transition: "width 300ms ease-in-out",
             position: "fixed",
             right: "0",
