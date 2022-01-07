@@ -31,7 +31,7 @@ export default function Landing() {
         <Navbar />
         <div className="container flex flex-col my-8 items-center px-6 max-w-full md:max-w-[75%] md:my-20 lg:my-32">
             <h1 className="text-4xl font-bold text-center"><span className="bg-gradient-to-br bg-clip-text text-transparent from-green-500 to-green-600">Blazingly</span> fast React sites with esbuild</h1>
-            <p className="text-3xl text-center my-12">GreenJS is as easy to use as create-react-app, and the page speed of a server-side rendering framework.</p>
+            <p className="text-3xl text-center my-12">GreenJS is as easy to use as create-react-app, and it's just as fast as server-side rendering.</p>
             <div className="flex space-x-6">
                 <Link
                     href="/docs/getting-started"
