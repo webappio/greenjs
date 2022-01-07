@@ -5,6 +5,18 @@ import Slide from '@mui/material/Slide';
 import {Link} from "@greenio/router";
 import {Drawer} from "@mui/material";
 import {Spin as Hamburger} from 'hamburger-react'
+import Prism from 'prismjs';
+import 'prismjs/components/prism-jsx.min';
+import 'prismjs/components/prism-json.min';
+import 'prismjs/themes/prism-tomorrow.css';
+
+export function Code({language, lang, children, className, ...props}) {
+    language = language || lang || "jsx";
+    return <pre className={"language-"+language+" rounded-xl overflow-hidden "+(className || "")} {...props} dangerouslySetInnerHTML={{
+        __html: Prism.highlight(children.trim(), Prism.languages.jsx,  language),
+    }}/>
+}
+
 
 function HideOnScroll({children}) {
     const slideTrigger = useScrollTrigger({});
@@ -103,10 +115,10 @@ export function DocBase({children}) {
         </HideOnScroll>
         <Drawer
             sx={{
-                width: "260px",
+                width: "240px",
                 flexShrink: 0,
                 '& .MuiDrawer-paper': {
-                    width: "260px",
+                    width: "240px",
                     boxSizing: 'border-box',
                     overflowY: "visible",
                 },
@@ -119,10 +131,10 @@ export function DocBase({children}) {
         >
             <Sidebar/>
         </Drawer>
-        <div className="hidden md:flex width-[260px] fixed top-0">
+        <div className="hidden md:flex w-[240px] fixed top-0">
             <Sidebar/>
         </div>
-        <div className="flex flex-col ml-[260px] pt-28 px-4 sm:px-8 md:px-12 container">
+        <div className="flex flex-col ml-[240px] pt-28 px-4 sm:px-8 md:px-12 container">
             {children}
         </div>
     </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import {DocBase} from "../base-doc-page";
+import {Code, DocBase} from "../base-doc-page";
 
 export default function Page() {
     return <DocBase>
@@ -8,8 +8,8 @@ export default function Page() {
         <p>
             esbuild is the library that GreenJS uses to create the html and javascript in the <code>dist</code> folder.
         </p>
-        <h3 className="mt-4 font-bold text-lg">Description of greenjs.json</h3>
-        <code lang="json"><pre>{`
+        <h3 className="mt-4 mb-2 font-bold text-lg">Description of greenjs.json</h3>
+        <Code lang="json">{`
 {
   "esbuild": {
     "entry_point_name": "App.js", //the name of the main app file, usually the one that calls Render(site)
@@ -31,7 +31,6 @@ export default function Page() {
   (other greenjs configuration)
 }
 
-            `}
-        </pre></code>
+        `}</Code>
     </DocBase>
 }

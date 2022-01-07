@@ -11,6 +11,7 @@ const Site = () => {
 			<title>GreenJS Docs</title>
 			<meta name="cache-control" content="public" />
 			<link rel="stylesheet" href="/App.css" />
+			<link rel="stylesheet" href="/Site.css" />
 			<meta name="viewport" content="width=device-width, initial-scale=1" />
 			<script async src="https://www.googletagmanager.com/gtag/js?id=G-8QM8LHVH3P" />
 			<script>{`
@@ -28,7 +29,7 @@ const Site = () => {
 			<Route path="/docs/examples" asyncPage={() => import("./src/topics/getting-started/examples")} />
 			<Route path="/docs/why" asyncPage={() => import("./src/topics/getting-started/why")} />
 			<Route path="/docs/router" asyncPage={() => import("./src/topics/react-components/router")} />
-			<Route path="/docs/head" asyncPage={() => import("./src/topics/react-components/router")} />
+			<Route path="/docs/head" asyncPage={() => import("./src/topics/react-components/header")} />
 			<Route path="/docs/esbuild" asyncPage={() => import("./src/topics/configuration/esbuild")} />
 			<Route path="/docs/development" asyncPage={() => import("./src/topics/configuration/development")} />
 			<Route path="/docs/performance" asyncPage={() => import("./src/topics/configuration/performance")} />
