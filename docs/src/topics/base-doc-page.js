@@ -65,11 +65,11 @@ function Sidebar() {
                 <SidebarLink href="/docs/tailwindcss">TailwindCSS</SidebarLink>
             </div>
 
-            <h3 className="text-md font-bold">Comparisons</h3>
-            <div className="border-l-2 border-slate-200 mt-2 mb-8 ml-1 flex flex-col">
-                <SidebarLink href="/docs/nextjs-comparison">NextJS</SidebarLink>
-                <SidebarLink href="/docs/create-react-app-comparison">create-react-app</SidebarLink>
-            </div>
+            {/*<h3 className="text-md font-bold">Comparisons</h3>*/}
+            {/*<div className="border-l-2 border-slate-200 mt-2 mb-8 ml-1 flex flex-col">*/}
+            {/*    <SidebarLink href="/docs/nextjs-comparison">NextJS</SidebarLink>*/}
+            {/*    <SidebarLink href="/docs/create-react-app-comparison">create-react-app</SidebarLink>*/}
+            {/*</div>*/}
         </div>
     </div>
 }
