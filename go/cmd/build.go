@@ -1,11 +1,14 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/webappio/greenjs/go/config"
 	"github.com/webappio/greenjs/go/devserver"
+	"github.com/webappio/greenjs/go/resources"
+	"io"
 	"io/ioutil"
 	"log"
 	"net"
@@ -79,6 +82,23 @@ func Build(args []string) {
 		}
 		wg.Done()
 		log.Println("Built!")
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		out, err := os.OpenFile(filepath.Join(buildOpts.Outdir, "prod-server"), os.O_WRONLY|os.O_TRUNC|os.O_CREATE,0o755)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		defer out.Close()
+
+		_, err = io.Copy(out, bytes.NewReader(resources.ProdServer))
+		if err != nil {
+			log.Println(err)
+			return
+		}
 	}()
 
 	wg.Wait()
