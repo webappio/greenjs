@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/evanw/esbuild/pkg/api"
-	"github.com/pkg/errors"
-	"github.com/webappio/greenjs/go/resources"
 	"github.com/fsnotify/fsnotify"
+	"github.com/pkg/errors"
+	"github.com/webappio/greenjs/go/findroutes"
+	"github.com/webappio/greenjs/go/resources"
 	"io/fs"
 	"log"
 	"net"
@@ -23,9 +24,9 @@ var errNotFound = errors.New("not found")
 type GreenJsServer struct {
 	UpstreamHost string
 	BuildOpts *api.BuildOptions
-	PageIsRoute func(string) bool
 	InjectDevSidebar bool
 
+	routes []string
 	fileChangeListeners sync.Map
 
 	server *http.Server
@@ -62,6 +63,9 @@ func (srv *GreenJsServer) Serve(listener net.Listener) error {
 				srv.errMessagesMutex.Lock()
 				srv.errMessages = result.Errors
 				srv.errMessagesMutex.Unlock()
+				go func() {
+					srv.routes = findroutes.FindRoutesFromOutputFiles(result.OutputFiles)
+				}()
 			})
 		},
 	})
@@ -185,11 +189,15 @@ func (srv *GreenJsServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		}
 		return
 	}
-	isIndex := req.URL.Path == "/"
-	if srv.PageIsRoute != nil {
-		isIndex = isIndex || srv.PageIsRoute(req.URL.Path)
+	serveBasicHTML := req.URL.Path == "/"
+	for _, route := range srv.routes {
+		if route == req.URL.Path { //TODO should work with /routes/like/:this
+			serveBasicHTML = true
+			break
+		}
 	}
-	if isIndex {
+
+	if serveBasicHTML {
 		hasErrors := false
 		srv.errMessagesMutex.Lock()
 		hasErrors = len(srv.errMessages) > 0
@@ -199,6 +207,7 @@ func (srv *GreenJsServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
+
 	req.Header.Set("X-Forwarded-Host", req.Host)
 	req.Header.Set("X-Forwarded-Proto", req.Proto)
 	srv.reverseProxy.ServeHTTP(rw, req)

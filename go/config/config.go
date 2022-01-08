@@ -44,8 +44,9 @@ type ESBuildConfig struct {
 }
 
 type GreenJSConfig struct {
-	ESBuildConfig ESBuildConfig `json:"esbuild"`
-	ParallelTasks int32         `json:"parallel_tasks"`
+	ESBuildConfig      ESBuildConfig `json:"esbuild"`
+	ParallelTasks      int32         `json:"parallel_tasks"`
+	RenderInForeground bool          `json:"render_in_foreground"`
 }
 
 func Defaults() GreenJSConfig {
@@ -54,19 +55,19 @@ func Defaults() GreenJSConfig {
 		ESBuildConfig: ESBuildConfig{
 			EntryPointName: "App.js",
 			FileImportTypes: map[string]string{
-				".jsx": "jsx",
-				".js": "jsx",
-				".tsx": "tsx",
-				".ts": "tsx",
-				".jpg": "file",
+				".jsx":  "jsx",
+				".js":   "jsx",
+				".tsx":  "tsx",
+				".ts":   "tsx",
+				".jpg":  "file",
 				".jpeg": "file",
-				".png": "file",
-				".svg": "file",
-				".css": "css",
+				".png":  "file",
+				".svg":  "file",
+				".css":  "css",
 			},
-			OutDir: "dist",
+			OutDir:           "dist",
 			MinifyWhitespace: EnvironmentBooleanOnlyProduction,
-			MinifySyntax: EnvironmentBooleanOnlyProduction,
+			MinifySyntax:     EnvironmentBooleanOnlyProduction,
 		},
 	}
 }

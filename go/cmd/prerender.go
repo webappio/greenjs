@@ -16,6 +16,7 @@ import (
 
 type Prerenderer struct {
 	URI string
+	Routes []string
 	Config config.GreenJSConfig
 
 	browserCtx context.Context
@@ -25,12 +26,17 @@ type Prerenderer struct {
 }
 
 func (p *Prerenderer) Start() error {
-	p.browserCtx, p.cancel = chromedp.NewContext(context.Background())
-	err := chromedp.Run(p.browserCtx)
-	if err != nil {
-		return errors.Wrap(err, "could not create a browser")
+	opts := append(chromedp.DefaultExecAllocatorOptions[:])
+	if p.Config.RenderInForeground {
+		opts = append(opts, chromedp.Flag("headless", false))
 	}
-	return nil
+	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
+	p.cancel = cancel
+
+	// also set up a custom logger
+	p.browserCtx, _ = chromedp.NewContext(allocCtx, chromedp.WithLogf(log.Printf))
+
+	return chromedp.Run(p.browserCtx)
 }
 
 func (p *Prerenderer) Cancel() {
@@ -39,20 +45,29 @@ func (p *Prerenderer) Cancel() {
 	}
 }
 
-func (p *Prerenderer) RenderAll() error {
-	p.pagesVisited.Store("/", true)
-	err := p.RenderToFile(p.browserCtx, "/", filepath.Join(p.Config.ESBuildConfig.OutDir, "index"))
-	if err != nil {
-		return err
+func (p *Prerenderer) routeToFileBaseName(route string) string {
+	stripped := strings.Trim(route, "/")
+	if stripped == "" {
+		stripped = "index"
 	}
+	return filepath.Join(p.Config.ESBuildConfig.OutDir, stripped)
+}
+
+func (p *Prerenderer) RenderAll() error {
 	wg := sync.WaitGroup{}
 	anyVisited := true
+
+	p.pagesToVisit.Store("/", true)
+	for _, route := range p.Routes {
+		p.pagesToVisit.Store(route, true)
+	}
 
 	var queueMutex sync.Mutex
 	queueCond := sync.NewCond(&queueMutex)
 	queueTasks := p.Config.ParallelTasks
 
 	for anyVisited {
+		var err error
 		anyVisited = false
 		p.pagesToVisit.Range(func(pagePath, _ interface{}) bool {
 			wg.Add(1)
@@ -64,7 +79,8 @@ func (p *Prerenderer) RenderAll() error {
 				}
 				atomic.AddInt32(&queueTasks, -1)
 				queueMutex.Unlock()
-				renderErr := p.RenderToFile(p.browserCtx, pagePath.(string), filepath.Join(p.Config.ESBuildConfig.OutDir, strings.Trim(pagePath.(string), "/")))
+				p.pagesVisited.Store(pagePath.(string), true)
+				renderErr := p.RenderToFile(p.browserCtx, pagePath.(string), p.routeToFileBaseName(pagePath.(string)))
 				if renderErr != nil {
 					err = renderErr
 				}
@@ -88,7 +104,7 @@ func (p *Prerenderer) GetPagesVisited() *sync.Map {
 }
 
 func (p *Prerenderer) RenderToFile(ctx context.Context, pagePath, fileBaseName string) error {
-	log.Print("Rendering html for ", fileBaseName)
+	log.Print("Rendering html for ", pagePath, ", ", fileBaseName)
 	err := os.MkdirAll(filepath.Dir(fileBaseName), 0o755)
 	if err != nil {
 		return errors.Wrapf(err, "could not make directories for %v", fileBaseName)

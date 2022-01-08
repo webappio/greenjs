@@ -7,6 +7,7 @@ import (
 	"github.com/evanw/esbuild/pkg/api"
 	"github.com/webappio/greenjs/go/config"
 	"github.com/webappio/greenjs/go/devserver"
+	"github.com/webappio/greenjs/go/findroutes"
 	"github.com/webappio/greenjs/go/resources"
 	"io"
 	"io/ioutil"
@@ -45,10 +46,6 @@ func Build(args []string) {
 
 		prerenderer.URI = "http://127.0.0.1:" + fmt.Sprint(listener.Addr().(*net.TCPAddr).Port)
 		greenJsServer = &devserver.GreenJsServer{
-			PageIsRoute: func(s string) bool {
-			_, ok := prerenderer.pagesVisited.Load(s)
-			return ok
-			},
 			BuildOpts: &buildOpts,
 		}
 
@@ -64,10 +61,12 @@ func Build(args []string) {
 	}()
 
 	go func() {
+		wg.Add(1)
 		err := prerenderer.Start()
 		if err != nil {
 			log.Fatal(err)
 		}
+		wg.Done()
 	}()
 
 	wg.Add(1)
@@ -80,6 +79,7 @@ func Build(args []string) {
 			}
 			os.Exit(1)
 		}
+		prerenderer.Routes = findroutes.FindRoutesFromOutputFiles(result.OutputFiles)
 		wg.Done()
 		log.Println("Built!")
 	}()
@@ -87,7 +87,7 @@ func Build(args []string) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		out, err := os.OpenFile(filepath.Join(buildOpts.Outdir, "prod-server"), os.O_WRONLY|os.O_TRUNC|os.O_CREATE,0o755)
+		out, err := os.OpenFile(filepath.Join(buildOpts.Outdir, "prod-server"), os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0o755)
 		if err != nil {
 			log.Println(err)
 			return
