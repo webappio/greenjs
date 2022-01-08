@@ -1,6 +1,6 @@
 {
   "name": "greenjs",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Blazingly-fast site generator for React",
   "author": "Colin Chartier",
   "license": "MIT",
