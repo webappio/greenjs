@@ -66,17 +66,9 @@ const RouteView = ({route, routePath}) => {
     return currContents;
 }
 
-const Router = ({children}) => {
-    if (typeof children === "object" && children?.props?.path) {
-        children = [children];
-    }
-    if (typeof children !== "object" || !children.length) {
-        throw new Error("Invalid Router children, expected a list of Route")
-    }
-
-    const [pathname, setPathname] = React.useState(window.location.pathname);
-    if(!window._GreenJsPushStatePatched) {
-        window._GreenJsPushStatePatched = true;
+const ensureHistoryPatched = () => {
+    if(!window._GreenJsHistoryPatched) {
+        window._GreenJsHistoryPatched = true;
         window.history.pushState = new Proxy(window.history.pushState, {
             apply: (target, thisArg, argArray) => {
                 const res = target.apply(thisArg, argArray);
@@ -86,7 +78,29 @@ const Router = ({children}) => {
                 return res;
             },
         });
+        window.history.replaceState = new Proxy(window.history.replaceState, {
+            apply: (target, thisArg, argArray) => {
+                const res = target.apply(thisArg, argArray);
+                for(let listener of (window._GreenJsPushStateListeners || [])) {
+                    listener(window.location.pathname);
+                }
+                return res;
+            },
+        });
     }
+    window._GreenJsPushStateListeners ||= [];
+}
+
+const Router = ({children}) => {
+    if (typeof children === "object" && children?.props?.path) {
+        children = [children];
+    }
+    if (typeof children !== "object" || !children.length) {
+        throw new Error("Invalid Router children, expected a list of Route")
+    }
+    ensureHistoryPatched();
+
+    const [pathname, setPathname] = React.useState(window.location.pathname);
     window.addEventListener("popstate", e => {
         setPathname(window.location.pathname);
     })
@@ -94,6 +108,7 @@ const Router = ({children}) => {
     useEffect(() => {
         const listener = (x) => setPathname(x);
         window._GreenJsPushStateListeners = [...(window._GreenJsPushStateListeners || []), listener];
+        listener(window.location.pathname); //in case someone changed location in a useEffect
         return () => {
             window._GreenJsPushStateListeners = window._GreenJsPushStateListeners.filter(x => x !== listener);
         }
@@ -131,6 +146,7 @@ const Router = ({children}) => {
 }
 
 const Route = ({path, asyncPage, children}) => {
+    ensureHistoryPatched();
     if (asyncPage) {
         const Loaded = (window._GreenJSAsyncPages || {})[path];
         if(Loaded) {
@@ -149,6 +165,7 @@ const Route = ({path, asyncPage, children}) => {
 }
 
 const Link = React.forwardRef(({href, to, children, activeClassName, className, ...props}, ref) => {
+    ensureHistoryPatched();
     if (!href && to) {
         href = to;
     }
@@ -213,8 +230,25 @@ const Link = React.forwardRef(({href, to, children, activeClassName, className, 
     >{children}</a>
 });
 
+const Redirect = ({to, push}) => {
+    ensureHistoryPatched();
+    let currRoute = useRoute();
+    let match = currRoute.getMatchingRoute(to);
+    if(!match) {
+        throw new Error("Invalid redirect target, could not find route: "+to);
+    }
+    useEffect(() => {
+        if(push) {
+            history.pushState(null, "", to);
+        } else {
+            history.replaceState(null, "", to);
+        }
+    }, [window._GreenJsPushStateListeners]);
+    return null;
+}
+
 const useRoute = () => {
     return React.useContext(RouteContext);
 }
 
-export {Router, Route, Link, useRoute}
+export {Router, Route, Link, Redirect, useRoute}

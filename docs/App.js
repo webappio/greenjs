@@ -3,7 +3,7 @@
 import React from "react";
 import {Render} from "@greenio/react";
 import {Head} from "@greenio/head";
-import {Route, Router} from "@greenio/router";
+import {Route, Router, Redirect} from "@greenio/router";
 
 const Site = () => {
 	return <div>
@@ -35,7 +35,8 @@ const Site = () => {
 			<Route path="/docs/plugins" asyncPage={() => import("./src/topics/configuration/plugins")} />
 			<Route path="/docs/tailwindcss" asyncPage={() => import("./src/topics/integrations/tailwindcss")} />
 			<Route path="/docs/nextjs-comparison" asyncPage={() => import("./src/topics/comparisons/nextjs")} />
-			<Route path="/docs/create-react-app-comparison" asyncPage={() => import("./src/topics/comparisons/cra")} />
+			<Route path="/docs/vite" asyncPage={() => import("./src/topics/comparisons/vite")} />
+			<Route path="/docs/"><Redirect to="/docs/getting-started"/></Route>
 			<Route path="/" asyncPage={() => import("./src/landing")}/>
 		</Router>
 	</div>

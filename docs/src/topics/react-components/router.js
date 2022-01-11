@@ -56,5 +56,17 @@ export default function App() {
     <Route asyncPage={() => import("./pages/404")} />
   </Router>
 }`}</Code>
+
+        <h3 className="font-bold text-lg mt-6 mb-2">Redirects</h3>
+        <Code>{`
+import {Route, Router, Redirect} from "@greenio/router";
+export default function App() {
+  return <Router>
+    <Route path="/docs/:page" asyncPage={() => import("./pages/docs")} />
+    <Route path="/docs"><Redirect to="/docs/getting-started"/> </Route>
+    <Route asyncPage={() => import("./pages/404")} />
+  </Router>
+}`}</Code>
+        <p>This example redirects /docs to /docs/getting-started</p>
     </DocBase>
 }
