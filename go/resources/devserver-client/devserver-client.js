@@ -110,6 +110,7 @@ const DevserverWidget = () => {
             position: "fixed",
             right: "10px", bottom: "50%",
             cursor: "pointer",
+            zIndex: "100000",
         }} onClick={() => {
             setSidebarOpen(x => !x);
         }}>

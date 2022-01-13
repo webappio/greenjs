@@ -77,7 +77,7 @@ export default function Page() {
         <ul className="list-disc space-y-2 mt-2 ml-4">
             <li><DocCmd>@greenio/router</DocCmd> allows you to create routes in Javascript, without needing to configure ExpressJS or putting your files in a specific directory.</li>
             <li><DocCmd>@greenio/head</DocCmd> lets you change the &lt;head /> attribute of your site directly from React, it lets you write exclusively JavaScript, without needing to write any HTML.</li>
-            <li><DocCmd>@greenio/router</DocCmd> also comes with a Link attribute that loads the content of a page when you mouse over the link, so that it's instantly there the second you click.</li>
+            <li><DocCmd>@greenio/router</DocCmd> contains a Link component that will pre-download the content of a page when you mouse over its link.</li>
         </ul>
 
         <h5 className="font-bold text-md my-2">

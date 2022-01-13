@@ -23,35 +23,65 @@ function InstallStep({imgElement, title, children, hideBar}) {
     </div>
 }
 
+function IndexCard({title, logoImg, children}) {
+    return <div className="flex flex-col items-center text-center w-full md:text-left md:items-start p-4 py-8 lg:p-6">
+        {logoImg}
+        <h3 className="text-xl font-bold my-2">{title}</h3>
+        <p className="text-lg">
+            {children}
+        </p>
+    </div>
+}
+
 export default function Landing() {
     return <main className="flex flex-col items-center">
         <Head>
-            <title>Prerendering react sites with esbuild | Better SEO without added complexity | GreenJS</title>
+            <title>Faster React sites without added complexity | GreenJS</title>
         </Head>
         <Navbar />
         <div className="container flex flex-col my-8 items-center px-6 max-w-full md:max-w-[75%] md:my-20 lg:my-32">
             <h1 className="text-4xl font-bold text-center"><span className="bg-gradient-to-br bg-clip-text text-transparent from-green-500 to-green-600">Blazingly</span> fast React sites with esbuild</h1>
-            <p className="text-3xl text-center my-12">GreenJS is as easy to use as create-react-app, and it's just as fast as server-side rendering.</p>
+            <p className="text-3xl text-center my-12">GreenJS is as intuitive as create-react-app, and as fast as server-side rendering.</p>
             <div className="flex space-x-6">
                 <Link
                     href="/docs/getting-started"
-                    className="flex items-center justify-center text-white
-                    bg-gradient-to-br from-green-600 to-green-700 rounded-lg py-3 px-5 text-2xl
+                    className="flex items-center justify-center text-white text-center
+                    bg-gradient-to-br from-green-600 to-green-700 rounded-lg  p-3 md:px-5 text-2xl
                     hover:from-green-500 hover:to-green-600"
                 >
                     Get Started
                 </Link>
                 <Link
                     href="/docs/why"
-                    className="flex items-center justify-center text-green-600
-                    bg-white border border-green-500 rounded-lg py-3 px-5 text-2xl
+                    className="flex items-center justify-center text-green-600 text-center
+                    bg-white border border-green-500 rounded-lg p-3 md:px-5 text-lg md:text-2xl
                     hover:bg-gradient-to-br from-green-500 to-green-600 hover:text-white"
                 >
                     Learn More
                 </Link>
             </div>
         </div>
-        <div className="container flex flex-col px-6 mt-16 md:mt-28 items-center mx-6">
+        <div className="container flex flex-col md:flex-row justify-center md:space-x-8 md:columns-3 m-8 md:mx-12 lg:mx-20">
+            <IndexCard
+                title="Build faster with a familiar interface"
+                logoImg={<img src="/static/images/book.svg" width="26" height="26"/>}
+            >
+                Iterate without reading our docs, the GreenJS &lt;Router> and &lt;Link> elements are already familiar to most React developers.
+            </IndexCard>
+            <IndexCard
+                title="'npm build' is 10x faster"
+                logoImg={<img src="/static/images/fast-forward.svg" width="26" height="26"/>}
+            >
+                GreenJS is written entirely in Go, and uses esbuild to finish builds in milliseconds instead of minutes.
+            </IndexCard>
+            <IndexCard
+                title="Add react components to existing sites"
+                logoImg={<img src="/static/images/upload-cloud.svg" width="26" height="26"/>}
+            >
+                The GreenJS production webserver can act as a proxy to forward traffic to an existing site effortlessly.
+            </IndexCard>
+        </div>
+        <div className="container flex flex-col px-6 mt-16 md:mt-20 items-center mx-6">
             <h5 className="uppercase font-bold bg-gradient-to-br bg-clip-text text-transparent from-green-500 to-green-600 text-3xl mt-20 mb-10 lg:mt-40 lg:mb-96">How to Get Started</h5>
             <InstallStep
                 imgElement={<img src="/static/images/react-code.svg" width="270" height="335" alt="Sample of React code" className="w-full h-auto lg:-translate-y-80"/>}
@@ -71,7 +101,7 @@ export default function Landing() {
                 title="3. Host your site as you usually would"
                 hideBar
             >
-                GreenJS can be configured to emit a high performance server in the dist folder to distribute the entire application with ease.
+                GreenJS automatically emits a high performance webserver in the dist folder to distribute the entire application with ease.
             </InstallStep>
         </div>
         <Footer />

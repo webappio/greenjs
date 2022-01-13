@@ -3,8 +3,8 @@ import {Link} from "@greenio/router";
 
 export function Navbar() {
     return <div className="container flex p-2 py-6 md:p-6 justify-between">
-        <Link href="/" className="flex-basis-[128px] grow-0 shrink-0 mx-2 md:mx-8">
-            <img src="/static/images/Logo.svg" alt="GreenJS logo" width="128" height="64"/>
+        <Link href="/" className="flex-basis-[80px] md:flex-basis-[128px] grow-0 shrink-0 mx-2 md:mx-8">
+            <img src="/static/images/Logo.svg" alt="GreenJS logo" width="128" height="64" className="w-full h-auto"/>
         </Link>
         <div className="flex text-lg font-bold uppercase items-center">
             <Link
@@ -33,9 +33,9 @@ export function Footer() {
                 </div>
                 <div className="flex flex-col items-start basis-full sm:basis-1/2 my-5">
                     <h5 className="uppercase text-slate-200 mb-1">Comparisons</h5>
-                    <Link href="/docs/nextjs-comparison" className="text-white hover:underline">NextJS</Link>
-                    <Link href="/docs/create-react-app-comparison"
-                          className="text-white hover:underline">create-react-app</Link>
+                    <Link href="/docs/nextjs-comparison" className="text-white hover:underline">NextJS vs GreenJS</Link>
+                    <Link href="/docs/vite-comparison"
+                          className="text-white hover:underline">Vite vs GreenJS</Link>
                 </div>
             </div>
             <div className="flex justify-between text-right text-sm border-t-2 pt-5 mt-2 border-slate-200">

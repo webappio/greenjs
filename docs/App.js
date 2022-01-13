@@ -36,7 +36,7 @@ const Site = () => {
 			<Route path="/docs/tailwindcss" asyncPage={() => import("./src/topics/integrations/tailwindcss")} />
 			<Route path="/docs/nextjs-comparison" asyncPage={() => import("./src/topics/comparisons/nextjs")} />
 			<Route path="/docs/vite-comparison" asyncPage={() => import("./src/topics/comparisons/vite")} />
-			<Route path="/docs/"><Redirect to="/docs/getting-started"/></Route>
+			<Route path="/docs"><Redirect to="/docs/getting-started"/></Route>
 			<Route path="/" asyncPage={() => import("./src/landing")}/>
 		</Router>
 	</div>
