@@ -1,0 +1,21 @@
+{
+  "esbuild": {
+    "entry_point_name": "App.js",
+    "file_import_types": {
+      ".css": "css",
+      ".jpeg": "file",
+      ".jpg": "file",
+      ".js": "jsx",
+      ".jsx": "jsx",
+      ".png": "file",
+      ".svg": "file",
+      ".ts": "tsx",
+      ".tsx": "tsx",
+      ".md": "text"
+    },
+    "out_dir": "dist",
+    "minify_whitespace": "only-prod",
+    "minify_syntax": "only-prod"
+  },
+  "parallel_tasks": 16
+}

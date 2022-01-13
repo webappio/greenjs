@@ -1,0 +1,15 @@
+.FeatureCard {
+    width: 100%;
+    min-width: 200px;
+    max-width: 400px;
+    padding: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+    .FeatureCard {
+        padding: 0px;
+        margin-bottom: 30px;
+        width: 100%;
+        max-width: 600px;
+    }
+} 
