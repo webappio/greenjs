@@ -11,7 +11,7 @@ export function Navbar() {
                 className="mx-2 md:mx-8 hover:underline"
                 href="/docs/getting-started">Docs</Link>
             <a className="mx-2 md:mx-8 hover:underline"
-               href="https://join.slack.com/t/greenjs/shared_invite/zt-109by8mrn-p9gbRlSovBXvoM_5VZn31g">Community</a>
+               href="https://discord.gg/zmbkhF8jnH">Community</a>
             <a className="mx-2 md:mx-8 hover:underline hidden md:block"
                href="https://github.com/webappio/greenjs">GitHub</a>
         </div>
