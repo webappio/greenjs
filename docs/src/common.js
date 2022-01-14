@@ -38,12 +38,22 @@ export function Footer() {
                           className="text-white hover:underline">Vite vs GreenJS</Link>
                 </div>
             </div>
-            <div className="flex justify-between text-right text-sm border-t-2 pt-5 mt-2 border-slate-200">
+            <div className="flex text-sm border-t-2 pt-5 mt-2 border-slate-200 space-x-4">
                 <a href="https://github.com/webappio/greenjs">
-                    <img src="/static/images/github.svg" alt="View GitHub repository" width="40" height="40"
-                         className="pr-4 invert"/>
+                    <img src="/static/images/github.svg" alt="GreenJS GitHub" width="20" height="20"
+                         className="invert"/>
                 </a>
-                ©2021 Colin Chartier and the GreenJS authors
+                <a href="https://twitter.com/greenjsio">
+                    <img src="/static/images/twitter.svg" alt="GreenJS Twitter" width="20" height="20"
+                         className="invert"/>
+                </a>
+                <a href="https://discord.com/invite/ZebRHXg8f6">
+                    <img src="/static/images/discord.svg" alt="GreenJS Discord" width="20" height="20"
+                         className="invert"/>
+                </a>
+                <div className="grow text-right">
+                    ©2021 Colin Chartier and the GreenJS authors
+                </div>
             </div>
         </div>
     </div>
