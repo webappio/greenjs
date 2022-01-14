@@ -1,4 +1,3 @@
-import { Typography } from "@mui/material";
 import React from "react";
 import {DocBase, DocLink} from "../base-doc-page";
 
