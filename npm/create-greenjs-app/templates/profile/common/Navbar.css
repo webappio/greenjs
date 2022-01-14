@@ -1,0 +1,8 @@
+.Navbar--Div {
+    display: flex;
+    padding: 30px;
+    height: 100px;
+}
+.Navbar--Link {
+    margin-right: 20px;
+}

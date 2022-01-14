@@ -1,0 +1,18 @@
+.ProjectCard--Div {
+    width: calc(50% - 80px);
+    height: 250px;
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ProjectCard--Div:hover {
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 900px) {
+    .ProjectCard--Div {
+        width: 100%;
+    }
+}

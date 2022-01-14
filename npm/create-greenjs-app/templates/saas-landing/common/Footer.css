@@ -1,0 +1,38 @@
+.Footer--Div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 350px;
+    padding: 50px;
+    background-color: #FBFBFB;
+}
+
+.Footer--Links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.Footer--Base {
+    padding-bottom: 40px;
+}
+
+.Footer--Base--Links {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+@media only screen and (max-width: 600px) {
+    .Footer--Div {
+        padding: 30px;
+    }
+
+    .Footer--Links > div {
+        margin-bottom: 30px;
+    }
+    .Footer--Base--Links > div {
+        margin-bottom: 10px;
+    }
+}

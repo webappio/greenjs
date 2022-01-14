@@ -1,0 +1,50 @@
+.ProjectCards--Div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.Project--Dialog {
+    padding: 50px;
+}
+
+.LinkClass {
+    padding: 10px 30px 10px 30px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.ProjectImage--Div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.ProjectImage--Container {
+    width: calc(50% - 30px);
+    height: 300px;
+    margin-bottom: 20px;
+}
+
+.ProjectImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    padding: 10px;
+    background-color: black;
+}
+
+@media only screen and (max-width: 600px) {
+    .LinkClass {
+        padding: 10px;
+    }
+    .ProjectImage--Container {
+        height: 200px;
+        width: 100% !important;
+    }
+}
