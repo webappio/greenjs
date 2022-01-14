@@ -1,0 +1,38 @@
+.TestimonialCard--Div {
+    width: 100%;
+    min-width: 200px;
+    max-width: 1000px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 80%;
+    min-height: 300px;
+    border-radius: 20px;
+    margin: 20px;
+}
+
+.TestimonialCard--Image {
+
+}
+
+.TestimonialCard--Quote {
+    padding: 30px;
+    text-align: center;
+}
+
+.TestimonialCard--Details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@media only screen and (max-width: 600px) {
+    .TestimonialCard--Div {
+        width: 100%;
+        max-width: 600px;
+        margin: 10px;
+    }
+}

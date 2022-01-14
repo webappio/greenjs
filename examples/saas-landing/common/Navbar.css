@@ -1,0 +1,15 @@
+.Navbar-Items {
+    display: block;
+}
+.Navbar--Items--Small {
+    display: none !important;
+}
+
+@media only screen and (max-width: 600px) {
+    .Navbar-Items {
+        display: none !important;
+    }
+    .Navbar--Items--Small {
+        display: block !important;
+    }
+}
