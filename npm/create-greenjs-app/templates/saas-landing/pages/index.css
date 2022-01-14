@@ -1,0 +1,182 @@
+.Hero--Div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 80px;
+    margin-bottom: 80px;
+    padding: 40px;
+    width: 80%;
+}
+.Hero--Text--Div {
+    width: 50%;
+}
+
+.Hero--Image--Div {
+    width: 50%;
+}
+.container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+
+/* More Information */
+.MoreInfo--Div {
+    margin-top: 140px;
+    margin-bottom: 140px;
+    text-align: center;
+    padding: 20px;
+}
+
+.MoreInfo--Main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 140px;
+    flex-wrap: wrap;
+}
+
+.MoreInfo--Main--Text {
+    text-align: left;
+    width: 100%;
+    max-width: 750px;
+    margin-left: 60px;
+}
+
+.MoreInfo--Main--Images {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.MoreInfo--Main--Image--Stacked {
+    display: flex;
+    flex-direction: column;
+    padding-left: 20px;
+}
+/* End of More Inforamtion */
+
+/* Large Image */
+.LargeImage {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+.LargeImage--Div {
+    height: 60vh;
+    width: 80%;
+}
+
+/* Feature Cards */
+.FeatureCards {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 30px;
+    flex-wrap: wrap;
+}
+.FeatureCard--Div {
+    margin-top: 200px;
+    margin-bottom: 200px;
+}
+
+/* TESTIMONIALS */
+.Testimonials--Div {
+    margin-top: 200px;
+    margin-bottom: 200px;
+}
+.Testimonials {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 30px;
+}
+
+.CTA {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 200px;
+    flex-wrap: wrap;
+}
+.CTA--Button {
+    font-size: 25px;
+    width: 400px;
+    max-width: 100%;
+    margin: 10px;
+}
+
+.Carousel--ContainerDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.Carousel--Container {
+    width: 80%;
+}
+
+@media only screen and (max-width: 600px) {
+    .MoreInfo--Main {
+        margin-top: 50px;
+    }
+    .MoreInfo--Main--Images {
+        display: none;
+    }
+
+    .Container {
+        width: 100%;
+    }
+
+    .Hero--Div {
+        margin-top: 30px;
+        margin-bottom: 30px;
+        padding: 10px;
+    }
+
+    .Hero--Text--Div {
+        width: 100%;
+    }
+    
+    .Hero--Image--Div {
+        width: 100%;
+        margin-top: 30px;
+    }
+
+    .LargeImage--Div {
+        width: 95%;
+        height: 40vh;
+    }
+
+    .MoreInfo--Div {
+        margin-top: 80px;
+        margin-bottom: 80px;
+    }
+
+    .MoreInfo--Main--Text {
+        margin: 30px 5px 0px 5px;
+    }
+
+    .LargeImage {
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+    .FeatureCard--Div {
+        margin-top: 100px;
+        margin-bottom: 50px;
+    }
+    .Testimonials--Div {
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+    .Testimonials {
+        padding: 10px;
+    }
+}

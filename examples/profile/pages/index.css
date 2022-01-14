@@ -1,0 +1,25 @@
+.Landing--Content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 100px;
+}
+
+.Landing--Content--Image {
+    height: 200px;
+    width: 200px;
+    border-radius: 50%;
+}
+
+.Landing--Content--Item {
+    margin-bottom: 10px;
+}
+
+@media only screen and (max-width: 600px) {
+    .Landing--Content {
+        margin-top: 0px;
+    }
+}

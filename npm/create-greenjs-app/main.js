@@ -23,17 +23,42 @@ function copyFolderRecursiveSync(source, target) {
     }
 }
 
-if(process.argv.length > 3) {
-    console.error("Usage: npx create-greenjs-example (destination directory)");
+// Check if the --template flag was used
+const TEMPLATES = {
+    "docs": true,
+    "profile": true,
+    "saas-landing": true,
+    "base-template": true,
+}
+let exampleTemplate = "";
+for (let i = 0; i < process.argv.length; i++) {
+    const command = process.argv[i];
+    if (command.includes("--template")) {
+        const templateName = command.split("template=")[1];
+        if (templateName in TEMPLATES) {
+            exampleTemplate = templateName;
+        }
+    }
+}
+
+if(process.argv.length > 4) {
+    console.error("Usage: npx create-greenjs-example (destination directory) --template=\"\"");
     process.exit(1);
 }
 
+
 let dest = "greenjs-example";
-if(process.argv.length === 3) {
+if((process.argv.length === 3 && exampleTemplate.length === 0) || process.argv.length === 4) {
     dest = process.argv[2];
 }
 
-copyFolderRecursiveSync(path.join(__dirname, "template"), dest)
+let templatePath = path.join(__dirname, "templates", "base-template");
+if (exampleTemplate.length > 0) {
+    templatePath = path.join(__dirname, "templates", exampleTemplate)
+}
+
+
+copyFolderRecursiveSync(templatePath, dest)
 
 process.chdir(dest);
 childProcess.execSync("npm install");
