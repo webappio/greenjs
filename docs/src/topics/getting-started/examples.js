@@ -46,15 +46,13 @@ export default function Page() {
                     <div
                     style={{
                         width: "400px",
-                        height: "300px",
-                        margin: "20px 40px 60px 0px",
+                        padding: "20px 40px 20px 0px",
                     }}
                     >
                         <img 
                         style={{
                             width: "100%",
-                            objectFit: "contain",
-                            objectPosition: "center",
+                            height: "auto",
                             marginBottom: "20px",
                         }}
                         src={ex.Src} alt={ex.Alt} />
