@@ -24,7 +24,7 @@ Instead of using complex file-based routing, use routes directly within React to
 ### 2. Run greenjs build to prerender your site
 
 At build-time, we’ll discover all of your routes. We’ll use a headless browser to visit all of your pages and run your React code. The resulting pages will be saved as HTML.
-<br><br><br>
+<br><br><br><br><br>
 
 <img src="https://greenjs.io/static/images/host-your-site.svg" width="250" alt="" align="left"/>
 
@@ -34,7 +34,7 @@ GreenJS automatically emits a high performance webserver in the dist folder to d
 <br><br><br><br><br><br>
 
 ## Ready to get started?
-- [Get started](https://greenjs.io/docs/getting-started)
+- [Getting started guide](https://greenjs.io/docs/getting-started)
 - [Learn more](https://greenjs.io/docs/why)
 - [See examples](https://greenjs.io/docs/examples)
 - [Join the discord](https://discord.gg/zmbkhF8jnH)
