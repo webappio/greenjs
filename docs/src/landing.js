@@ -40,8 +40,8 @@ export default function Landing() {
         </Head>
         <Navbar />
         <div className="container flex flex-col my-8 items-center px-6 max-w-full md:max-w-[75%] md:my-20 lg:my-32">
-            <h1 className="text-4xl font-bold text-center"><span className="bg-gradient-to-br bg-clip-text text-transparent from-green-500 to-green-600">Blazingly</span> fast React sites with esbuild</h1>
-            <p className="text-3xl text-center my-12">GreenJS is as intuitive as create-react-app, and as fast as server-side rendering.</p>
+            <h1 className="text-4xl font-bold text-center">Add performant React pages to an existing site.</h1>
+            <p className="text-3xl text-center my-12">GreenJS combines esbuild, Go, and prerendering into a great developer experience for React users.</p>
             <div className="flex space-x-6">
                 <Link
                     href="/docs/getting-started"
@@ -94,7 +94,7 @@ export default function Landing() {
                 imgElement={<img src="/static/images/dist-folder-example.svg" width="270" height="198" alt="Sample file structure of dist folder" className="w-full h-auto lg:-translate-y-60"/>}
                 title="2. Run greenjs build to prerender your site"
             >
-                At build-time, we’ll discover all of your routes. We’ll send a headless browser to visit all of your pages and run your React code. The resulting pages will be saved as HTML.
+                At build-time, we’ll discover all of your routes. We’ll use a headless browser to visit all of your pages and run your React code. The resulting pages will be saved as HTML.
             </InstallStep>
             <InstallStep
                 imgElement={<img src="/static/images/host-your-site.svg" width="270" height="234" alt="Visualization of uploading dist.zip" className="w-full h-auto lg:-translate-y-60 mt-28"/>}
@@ -103,6 +103,17 @@ export default function Landing() {
             >
                 GreenJS automatically emits a high performance webserver in the dist folder to distribute the entire application with ease.
             </InstallStep>
+        </div>
+        <div className="container flex flex-col px-6 my-16 lg:mt-0 md:mb-20 items-center mx-6 space-y-6">
+            <h1 className="text-2xl font-bold text-center">Ready to add performant React pages to your site?</h1>
+            <Link
+                href="/docs/getting-started"
+                className="flex items-center justify-center text-white text-center
+                    bg-gradient-to-br from-green-600 to-green-700 rounded-lg  p-3 md:px-5 text-2xl
+                    hover:from-green-500 hover:to-green-600"
+            >
+                Get Started
+            </Link>
         </div>
         <Footer />
     </main>

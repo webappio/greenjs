@@ -4,9 +4,10 @@ import {DocBase, DocCmd, DocLink} from "../base-doc-page";
 export default function Page() {
     return <DocBase>
         <h1 className="font-bold text-2xl mb-4">Why GreenJS?</h1>
-        <h3 className="font-bold text-lg mb-2">GreenJS's prerendering is the perfect blend of power, development speed, and performance.</h3>
+        <h3 className="font-bold text-lg mb-2">It lets you improve your frontend incrementally, without throwing everything out.</h3>
         <p className="mb-2">
-            If you're developing a website with React, you have three main choices:
+            Instead of server-side rendering, GreenJS comes with an optimized prerenderer that can easily add performant React pages to existing sites.
+            Prerendering is one of three possible ways to deploy a React site:
         </p>
         <div className="flex flex-col lg:flex-row lg:items-center my-2">
             <div className="flex flex-col">
@@ -17,9 +18,8 @@ export default function Page() {
                     You've likely already used <DocLink
                     href="https://github.com/facebook/create-react-app">create-react-app</DocLink> if you've worked with
                     react.
-                    It's amazingly simple to build apps with, but it's slow enough to cause problems if used
-                    professionally.
-                    Few companies use create-react-app because Google penalizes sites that are slow to show their content.
+                    It's amazingly simple to build apps with, but few companies use create-react-app in production.
+                    Slow page loads frustrate users, and cause SEO penalties.
                 </p>
             </div>
             <img src="/static/images/client-side.svg" alt="Graph of client-side rendering" width="352" height="224"/>
@@ -32,6 +32,7 @@ export default function Page() {
                 <p>
                     Server-side react was designed to be more performant, but it's generally harder to develop code with.
                     You need to write files in a certain structure, and you can't use existing APIs easily.
+                    In general, it requires you to re-write your entire site from scratch.
                 </p>
             </div>
             <img src="/static/images/server-side.svg" alt="Graph of server-side rendering" width="352" height="224"/>
@@ -45,7 +46,8 @@ export default function Page() {
                     Pre-rendered react has recently become popular as an alternative to server-side rendering.
                     The idea is to visit every page with a browser when you build, save the resulting HTML, and then serve that
                     immediately when users visit your site.
-                    In practice, this means it's like using create-react-app but with none of the usual performance costs.
+                    In practice, this means it's as fast as using create-react-app, but with none of the usual performance costs.
+                    GreenJS is even faster because it pre-downloads pages when you mouse over their links.
                 </p>
             </div>
             <img src="/static/images/prerendering.svg" alt="Graph of server-side rendering" width="352" height="224"/>
@@ -81,17 +83,17 @@ export default function Page() {
         </ul>
 
         <h5 className="font-bold text-md my-2">
+            It comes with production-ready webserver with a built-in reverse proxy.
+        </h5>
+        <p className="mb-2">
+            Once you've built your application, all you have to do is <DocCmd>./dist/GreenJSServer --upstream-addr=localhost:8080</DocCmd> to run GreenJS in a production configuration.
+        </p>
+
+        <h5 className="font-bold text-md my-2">
             Developer experience comes first.
         </h5>
         <p className="mb-2">
             GreenJS embeds a configurable toolbar into your site, which allows you to set up autoreloading when you save files.
-        </p>
-
-        <h5 className="font-bold text-md my-2">
-            Production ready with a high-performance webserver.
-        </h5>
-        <p className="mb-2">
-            Once you've built your application, all you have to do is <DocCmd>./dist/GreenJSServer</DocCmd> and you have a production-ready copy of your app.
         </p>
 
         <h5 className="font-bold text-md mt-4 mb-2">
