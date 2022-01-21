@@ -36,7 +36,7 @@ func Start(args []string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Server is listening at", listenAddr)
+	fmt.Println("Server is listening at http://"+listener.Addr().String())
 	err = (&devserver.GreenJsServer{
 		UpstreamHost: upstreamAddr,
 		BuildOpts: &buildOpts,
