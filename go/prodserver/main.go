@@ -7,6 +7,8 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -83,6 +85,10 @@ func main()  {
 	flags.StringVar(&listenAddr, "l", "0.0.0.0:8000", "the address to listen on (e.g., 0.0.0.0:8000)")
 	flags.StringVar(&listenAddr, "listen-addr", "0.0.0.0:8000", "the address to listen on (e.g., 0.0.0.0:8000)")
 
+	var upstreamAddr string
+	flags.StringVar(&upstreamAddr, "u", "", "the upstream server to forward requests to (e.g., localhost:8080)")
+	flags.StringVar(&upstreamAddr, "upstream-addr", "", "the upstream server to forward requests to (e.g., localhost:8080)")
+
 	flags.Parse(os.Args[1:])
 
 	routes, err := readRoutes()
@@ -113,5 +119,13 @@ func main()  {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	if upstreamAddr != "" {
+		reverseProxy := httputil.NewSingleHostReverseProxy(&url.URL{Scheme: "http", Host: upstreamAddr})
+		engine.NoRoute(func(context *gin.Context) {
+			reverseProxy.ServeHTTP(context.Writer, context.Request)
+		})
+	}
+
 	log.Fatal(http.ListenAndServe(listenAddr, engine))
 }
