@@ -178,7 +178,7 @@ func routeMatches(pattern, path string) bool {
 		if strings.HasPrefix(routeSplit[i], "*") {
 			return true
 		}
-		if i > len(pathSplit) || pathSplit[i] != routeSplit[i] {
+		if i >= len(pathSplit) || pathSplit[i] != routeSplit[i] {
 			return false
 		}
 	}
