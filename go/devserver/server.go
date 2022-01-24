@@ -169,7 +169,7 @@ func routeMatches(pattern, path string) bool {
 	}
 
 	pathSplit := strings.Split(path, "/")
-	routeSplit := strings.Split(path, "/")
+	routeSplit := strings.Split(pattern, "/")
 
 	for i := 0; i < len(routeSplit); i += 1 {
 		if strings.HasPrefix(routeSplit[i], ":"){
@@ -211,6 +211,7 @@ func (srv *GreenJsServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		}
 		return
 	}
+
 	serveBasicHTML := req.URL.Path == "/"
 	for _, route := range srv.routes {
 		if routeMatches(route, req.URL.Path) {
