@@ -75,7 +75,11 @@ func Build(args []string) {
 
 		if len(result.Errors) > 0 {
 			for _, err := range result.Errors {
-				log.Println(fmt.Sprintf("%v:%v %v", err.Location.File, err.Location.Line, err.Text))
+				if err.Location != nil {
+					log.Println(fmt.Sprintf("%v:%v %v", err.Location.File, err.Location.Line, err.Text))
+				} else {
+					log.Println(fmt.Sprintf("error: %v", err.Text))
+				}
 			}
 			os.Exit(1)
 		}

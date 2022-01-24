@@ -149,7 +149,6 @@ func main() {
 		panic(err)
 	}
 
-	copyFile("postinstall.js", "dist/base/postinstall.js")
 	copyFile("main.js", "dist/base/main.js")
 	publishPackageJson(filepath.Join("dist", "base", "package.json"), metaPackageJson)
 }

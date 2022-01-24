@@ -4,9 +4,6 @@
   "description": "Blazingly-fast site generator for React",
   "author": "Colin Chartier",
   "license": "MIT",
-  "scripts": {
-    "postinstall": "node postinstall.js"
-  },
   "bin": {
     "greenjs": "main.js"
   }
