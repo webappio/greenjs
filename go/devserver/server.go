@@ -163,6 +163,28 @@ func (srv *GreenJsServer) Stop() {
 	}
 }
 
+func routeMatches(pattern, path string) bool {
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+
+	pathSplit := strings.Split(path, "/")
+	routeSplit := strings.Split(path, "/")
+
+	for i := 0; i < len(routeSplit); i += 1 {
+		if strings.HasPrefix(routeSplit[i], ":"){
+			continue
+		}
+		if strings.HasPrefix(routeSplit[i], "*") {
+			return true
+		}
+		if i > len(pathSplit) || pathSplit[i] != routeSplit[i] {
+			return false
+		}
+	}
+	return len(routeSplit) == len(pathSplit)
+}
+
 func (srv *GreenJsServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	if req.URL.Path == "/greenjs-dev-connection" {
 		srv.HandleWS(rw, req)
@@ -191,7 +213,7 @@ func (srv *GreenJsServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	}
 	serveBasicHTML := req.URL.Path == "/"
 	for _, route := range srv.routes {
-		if route == req.URL.Path { //TODO should work with /routes/like/:this
+		if routeMatches(route, req.URL.Path) {
 			serveBasicHTML = true
 			break
 		}
