@@ -47,12 +47,12 @@ if(process.argv.length > 4) {
 }
 
 
-let dest = "greenjs-example";
+let dest = "saas-landing";
 if((process.argv.length === 3 && exampleTemplate.length === 0) || process.argv.length === 4) {
     dest = process.argv[2];
 }
 
-let templatePath = path.join(__dirname, "templates", "base-template");
+let templatePath = path.join(__dirname, "templates", "saas-landing");
 if (exampleTemplate.length > 0) {
     templatePath = path.join(__dirname, "templates", exampleTemplate)
 }
