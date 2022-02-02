@@ -37,4 +37,4 @@ GreenJS automatically emits a high performance webserver in the dist folder to d
 - [Getting started guide](https://greenjs.io/docs/getting-started)
 - [Learn more](https://greenjs.io/docs/why)
 - [See examples](https://greenjs.io/docs/examples)
-- [Join the discord](https://discord.gg/zmbkhF8jnH)
+- [Join the slack](https://join.slack.com/t/webappdevelopers/shared_invite/zt-12tklqflc-7y~sYb7K3kkLyqY_hHofXg)

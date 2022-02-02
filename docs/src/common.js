@@ -11,7 +11,7 @@ export function Navbar() {
                 className="mx-2 md:mx-8 hover:underline"
                 href="/docs/getting-started">Docs</Link>
             <a className="mx-2 md:mx-8 hover:underline"
-               href="https://discord.gg/zmbkhF8jnH">Community</a>
+               href="https://join.slack.com/t/webappdevelopers/shared_invite/zt-12tklqflc-7y~sYb7K3kkLyqY_hHofXg">Community</a>
             <a className="mx-2 md:mx-8 hover:underline hidden md:block"
                href="https://github.com/webappio/greenjs">GitHub</a>
         </div>
@@ -47,8 +47,8 @@ export function Footer() {
                     <img src="/static/images/twitter.svg" alt="GreenJS Twitter" width="20" height="20"
                          className="invert"/>
                 </a>
-                <a href="https://discord.com/invite/ZebRHXg8f6">
-                    <img src="/static/images/discord.svg" alt="GreenJS Discord" width="20" height="20"
+                <a href="https://join.slack.com/t/webappdevelopers/shared_invite/zt-12tklqflc-7y~sYb7K3kkLyqY_hHofXg">
+                    <img src="/static/images/slack.svg" alt="GreenJS Discord" width="20" height="20"
                          className="invert"/>
                 </a>
                 <div className="grow text-right">

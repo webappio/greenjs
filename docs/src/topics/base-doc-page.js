@@ -100,7 +100,7 @@ export function DocBase({children}) {
                     </div>
                     <div className="flex text-lg font-bold uppercase items-center pr-8">
                         {/*<input type="text" className="border border-slate-200 rounded-md px-2 grow shrink" placeholder="Search..."/>*/}
-                        <a href="https://discord.gg/zmbkhF8jnH"
+                        <a href="https://join.slack.com/t/webappdevelopers/shared_invite/zt-12tklqflc-7y~sYb7K3kkLyqY_hHofXg"
                            className="ml-8 hidden md:flex hover:underline">
                             Community
                         </a>
