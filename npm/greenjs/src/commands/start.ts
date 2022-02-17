@@ -1,5 +1,5 @@
 import {Command, Flags} from '@oclif/core'
-import vite from 'vite';
+import {createServer} from 'vite'
 
 export default class Start extends Command {
   static description = 'Start a development server for the project'
@@ -14,7 +14,8 @@ Server is available at http://localhost:3000
 
   async run() {
     const {args, flags} = await this.parse(Start)
-
-    this.log(`Server is available at http://localhost:3000`)
+    const server = await createServer();
+    await server.listen();
+    server.printUrls();
   }
 }

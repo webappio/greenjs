@@ -15,7 +15,7 @@ Source has been written to the dist/ folder!
 
   static args = []
 
-  async run(): Promise<void> {
+  async run() {
     const {args, flags} = await this.parse(Build)
 
     this.log(`Source has been written to the dist/ folder!`)
