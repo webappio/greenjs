@@ -22,7 +22,6 @@ const routesToPrerender = fs
   for (const url of routesToPrerender) {
     const context = {}
     const appHtml = await render(url, context);
-    console.log(context)
 
     const html = template.replace(`<!--app-html-->`, appHtml)
 

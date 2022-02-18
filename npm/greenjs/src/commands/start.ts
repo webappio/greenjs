@@ -1,20 +1,38 @@
 import {Command, Flags} from '@oclif/core'
 import {createServer} from 'vite'
+import react from '@vitejs/plugin-react';
+
 
 export default class Start extends Command {
   static description = 'Start a development server for the project'
 
   static examples = [
     `$ greenjs start
-Server is available at http://localhost:3000
+Pre-bundling dependencies:
+  react-dom
+  @greenio/head
+  @greenio/router
+  react/jsx-dev-runtime
+(this will be run only when your dependencies or config have changed)
+  > Local: http://localhost:3000/
+  > Network: use \`--host\` to expose
 `,
   ]
 
   static args = []
 
+  static flags = {
+    host: Flags.string({char: 'h', description: 'Which address to listen to', required: false}),
+  };
+
   async run() {
     const {args, flags} = await this.parse(Start)
-    const server = await createServer();
+    const server = await createServer({
+      plugins: [react()],
+      server: {
+        host: flags.host,
+      }
+    });
     await server.listen();
     server.printUrls();
   }

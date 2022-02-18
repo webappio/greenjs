@@ -12,8 +12,9 @@
     "debug": "node --inspect-brk server"
   },
   "dependencies": {
-    "@greenio/head": "^0.0.6",
-    "@greenio/router": "^0.0.11",
+    "@greenio/head": "file:../../npm/head/dist",
+    "@greenio/react": "file:../../npm/react",
+    "@greenio/router": "file:../../npm/router/dist",
     "greenjs": "file:../../npm/greenjs",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

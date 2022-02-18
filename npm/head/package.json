@@ -5,7 +5,8 @@
   "main": "Head.js",
   "private": false,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf dist && mkdir dist && cp package.json package-lock.json dist/ && esbuild --bundle --minify --sourcemap Head.js --external:react --outdir=dist --format=esm"
   },
   "repository": {
     "type": "git",
@@ -28,5 +29,9 @@
   "peerDependencies": {
     "react": ">=16.8",
     "react-dom": ">=16.8"
+  },
+  "type": "module",
+  "devDependencies": {
+    "esbuild": "^0.14.22"
   }
 }
