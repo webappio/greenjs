@@ -1,5 +1,5 @@
 import {Head} from "@greenio/head"
-import {Route, Link, Router} from "@greenio/router"
+import {Route, Link, Switch} from "@greenio/router"
 
 export function App() {
   return (
@@ -17,11 +17,11 @@ export function App() {
         </ul>
       </nav>
 
-      <Router>
-        <Route path="/" asyncPage={() => import("./pages/Home")} />
-        <Route path="/env" asyncPage={() => import("./pages/Env")} />
-        <Route path="/about" asyncPage={() => import("./pages/About")} />
-      </Router>
+      <Switch>
+        <Route path="/" asyncPage={() => import("./src/pages/Home")} />
+        <Route path="/env" asyncPage={() => import("./src/pages/Env")} />
+        <Route path="/about" asyncPage={() => import("./src/pages/About")} />
+      </Switch>
     </>
   )
 }

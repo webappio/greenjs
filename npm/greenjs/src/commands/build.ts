@@ -32,6 +32,13 @@ Source has been written to the dist/ folder!
     await vite.build({
       plugins: [react()],
       publicDir: "dist",
+      build: {
+        rollupOptions: {
+          // input: {
+          //   main: "./App.jsx"
+          // },
+        }
+      }
     });
 
     // @ts-ignore

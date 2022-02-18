@@ -1,4 +1,21 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState, useContext} from "react";
+
+const routerContext = React.createContext({
+    staticPath: null,
+    currRoute: null,
+    setCurrRoute: route => null,
+});
+
+const Router = ({staticPath, children}) => {
+    const [route, setCurrRoute] = useState(null);
+    return <routerContext.Provider
+        value={{
+            staticPath: staticPath,
+            currRoute: route,
+            setCurrRoute: setCurrRoute,
+        }}
+    >{children}</routerContext.Provider>
+}
 
 const getPathResult = (path, routePath) => {
     if (path.charAt(0) !== "/") {
@@ -25,12 +42,6 @@ const getPathResult = (path, routePath) => {
     result.success = routeSplit.length === pathSplit.length;
     return result;
 }
-
-const RouteContext = React.createContext({
-    params: {},
-    routePath: "",
-    getMatchingRoute: route => null,
-});
 
 const RouteView = ({route, routePath}) => {
     const [currContents, setCurrContents] = React.useState(null);
@@ -67,6 +78,10 @@ const RouteView = ({route, routePath}) => {
 }
 
 const ensureHistoryPatched = () => {
+    if(!window) {
+        return; //SSR
+    }
+    window._GreenJsPushStateListeners ||= [];
     if(!window._GreenJsHistoryPatched) {
         window._GreenJsHistoryPatched = true;
         window.history.pushState = new Proxy(window.history.pushState, {
@@ -88,15 +103,14 @@ const ensureHistoryPatched = () => {
             },
         });
     }
-    window._GreenJsPushStateListeners ||= [];
 }
 
-const Router = ({children}) => {
+const Switch = ({children}) => {
     if (typeof children === "object" && children?.props?.path) {
         children = [children];
     }
     if (typeof children !== "object" || !children.length) {
-        throw new Error("Invalid Router children, expected a list of Route")
+        throw new Error("Invalid Switch children, expected a list of Route")
     }
     ensureHistoryPatched();
 
@@ -113,6 +127,11 @@ const Router = ({children}) => {
             window._GreenJsPushStateListeners = window._GreenJsPushStateListeners.filter(x => x !== listener);
         }
     }, [])
+
+    const RouterContext = useContext(routerContext);
+    if(!RouterContext) {
+        throw new Error("Switch can only be used within a Router")
+    }
 
     const getBestRoute = path => {
         let bestMatchResult = null;
@@ -131,18 +150,19 @@ const Router = ({children}) => {
         return bestMatchResult;
     }
     let result = getBestRoute(pathname);
+    useEffect(() => {
+        RouterContext.setCurrRoute({
+            params: result.matchResult.params,
+            routePath: result.matchResult.routePath,
+            getMatchingRoute: path => getBestRoute(path),
+        });
+    }, [pathname]);
 
     if (!result) {
         return null;
     }
 
-    return <RouteContext.Provider value={{
-        params: result.matchResult.params,
-        routePath: result.matchResult.routePath,
-        getMatchingRoute: path => getBestRoute(path),
-    }}>
-        <RouteView route={result?.reactEl} routePath={result?.matchResult.routePath} />
-    </RouteContext.Provider>;
+    return <RouteView route={result?.reactEl} routePath={result?.matchResult.routePath} />
 }
 
 const Route = ({path, asyncPage, children}) => {
@@ -248,7 +268,7 @@ const Redirect = ({to, push}) => {
 }
 
 const useRoute = () => {
-    return React.useContext(RouteContext);
+    return React.useContext(routerContext)?.currRoute;
 }
 
-export {Router, Route, Link, Redirect, useRoute}
+export {Router, Switch, Route, Link, Redirect, useRoute}

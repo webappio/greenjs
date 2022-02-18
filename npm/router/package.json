@@ -5,7 +5,7 @@
   "main": "router.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf dist && mkdir dist && cp package.json package-lock.json dist/ && esbuild --bundle --minify --sourcemap router.js --external:react --outdir=dist --format=esm --loader:.js=jsx"
+    "build": "rm -rf dist && mkdir dist && cp package.json package-lock.json dist/ && esbuild --bundle --sourcemap router.js --external:react --outdir=dist --format=esm --loader:.js=jsx"
   },
   "repository": {
     "type": "git",
