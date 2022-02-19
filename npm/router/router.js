@@ -3,16 +3,19 @@ import React, {useEffect, useState, useContext} from "react";
 const routerContext = React.createContext({
     staticPath: null,
     currRoute: null,
+    context: {},
     setCurrRoute: route => null,
 });
 
-const Router = ({staticPath, children}) => {
+const Router = ({staticPath, context, children}) => {
     const [route, setCurrRoute] = useState(null);
+    const currRouter = useContext(routerContext) || {};
     return <routerContext.Provider
         value={{
-            staticPath: staticPath,
+            staticPath: staticPath || currRouter.staticPath,
             currRoute: route,
             setCurrRoute: setCurrRoute,
+            context: context || {},
         }}
     >{children}</routerContext.Provider>
 }
@@ -46,10 +49,11 @@ const getPathResult = (path, routePath) => {
 const RouteView = ({route, routePath}) => {
     const [currContents, setCurrContents] = React.useState(null);
     const [currRoutePath, setCurrRoutePath] = React.useState(null);
+    const {context} = useContext(routerContext);
 
     if(route?.props?.asyncPage) {
-        if(window._GreenJSAsyncPages && window._GreenJSAsyncPages[routePath]) {
-            let Page = window._GreenJSAsyncPages[routePath];
+        if(context.asyncPages && context.asyncPages[routePath]) {
+            let Page = context.asyncPages[routePath];
             if(currRoutePath !== routePath) {
                 setCurrContents(<Page />);
                 setCurrRoutePath(routePath);
@@ -58,14 +62,14 @@ const RouteView = ({route, routePath}) => {
         }
         let importPromise = new Promise(resolve => {
             route?.props?.asyncPage().then(page => {
-                window._GreenJSAsyncPages = {...(window._GreenJSAsyncPages || {}), [routePath]: page.default}
+                context.asyncPages = {...(context.asyncPages || {}), [routePath]: page.default}
                 let Page = page.default;
                 setCurrContents(<Page />);
                 setCurrRoutePath(routePath);
                 resolve(true);
             })
         });
-        window._GreenJSPromises = {...(window._GreenJSPromises || {}), [routePath]: importPromise};
+        context.routePromises = {...(context.routePromises || {}), [routePath]: importPromise};
     } else {
         if(currRoutePath !== routePath) {
             setCurrContents(route);
@@ -81,13 +85,14 @@ const ensureHistoryPatched = () => {
     if(!window) {
         return; //SSR
     }
-    window._GreenJsPushStateListeners ||= [];
+    const {context} = useContext(routerContext);
+    context.pushStateListeners ||= [];
     if(!window._GreenJsHistoryPatched) {
         window._GreenJsHistoryPatched = true;
         window.history.pushState = new Proxy(window.history.pushState, {
             apply: (target, thisArg, argArray) => {
                 const res = target.apply(thisArg, argArray);
-                for(let listener of (window._GreenJsPushStateListeners || [])) {
+                for(let listener of (context.pushStateListeners || [])) {
                     listener(window.location.pathname);
                 }
                 return res;
@@ -96,7 +101,7 @@ const ensureHistoryPatched = () => {
         window.history.replaceState = new Proxy(window.history.replaceState, {
             apply: (target, thisArg, argArray) => {
                 const res = target.apply(thisArg, argArray);
-                for(let listener of (window._GreenJsPushStateListeners || [])) {
+                for(let listener of (context.pushStateListeners || [])) {
                     listener(window.location.pathname);
                 }
                 return res;
@@ -106,32 +111,33 @@ const ensureHistoryPatched = () => {
 }
 
 const Switch = ({children}) => {
+    const RouterContext = useContext(routerContext);
+    if(!RouterContext) {
+        throw new Error("Switch can only be used within a Router")
+    }
+
+    const {context, setCurrRoute} = RouterContext;
+    ensureHistoryPatched();
+
+    const [pathname, setPathname] = React.useState(window.location.pathname);
     if (typeof children === "object" && children?.props?.path) {
         children = [children];
     }
     if (typeof children !== "object" || !children.length) {
         throw new Error("Invalid Switch children, expected a list of Route")
     }
-    ensureHistoryPatched();
-
-    const [pathname, setPathname] = React.useState(window.location.pathname);
     window.addEventListener("popstate", e => {
         setPathname(window.location.pathname);
     })
 
     useEffect(() => {
         const listener = (x) => setPathname(x);
-        window._GreenJsPushStateListeners = [...(window._GreenJsPushStateListeners || []), listener];
+        context.pushStateListeners = [...(context.pushStateListeners || []), listener];
         listener(window.location.pathname); //in case someone changed location in a useEffect
         return () => {
-            window._GreenJsPushStateListeners = window._GreenJsPushStateListeners.filter(x => x !== listener);
+            context.pushStateListeners = context.pushStateListeners.filter(x => x !== listener);
         }
     }, [])
-
-    const RouterContext = useContext(routerContext);
-    if(!RouterContext) {
-        throw new Error("Switch can only be used within a Router")
-    }
 
     const getBestRoute = path => {
         let bestMatchResult = null;
@@ -145,13 +151,13 @@ const Switch = ({children}) => {
                     bestMatchResult = {matchResult, reactEl: route};
                 }
             }
-            window._GreenJSRoutes = {...(window._GreenJSRoutes ?? {}), [route.props.path]: true}
+            context.routes = {...(context.routes ?? {}), [route.props.path]: true}
         }
         return bestMatchResult;
     }
     let result = getBestRoute(pathname);
     useEffect(() => {
-        RouterContext.setCurrRoute({
+        setCurrRoute({
             params: result.matchResult.params,
             routePath: result.matchResult.routePath,
             getMatchingRoute: path => getBestRoute(path),
@@ -166,15 +172,21 @@ const Switch = ({children}) => {
 }
 
 const Route = ({path, asyncPage, children}) => {
+    const RouterContext = useContext(routerContext);
+    if(!RouterContext) {
+        throw new Error("Switch can only be used within a Router")
+    }
+
+    const {context} = RouterContext;
     ensureHistoryPatched();
     if (asyncPage) {
-        const Loaded = (window._GreenJSAsyncPages || {})[path];
+        const Loaded = (context.asyncPages || {})[path];
         if(Loaded) {
             return <Loaded />
         }
         const E = React.lazy(async () => {
             let importResult = await asyncPage();
-            window._GreenJSAsyncPages = {...(window._GreenJSAsyncPages || {}), [path]: importResult.default}
+            context.asyncPages = {...(context.asyncPages || {}), [path]: importResult.default}
             return importResult;
         });
         return <React.Suspense fallback={<></>}>
@@ -190,7 +202,8 @@ const Link = React.forwardRef(({href, to, children, activeClassName, className, 
         href = to;
     }
     const url = new URL(href, document.location.href);
-    let currRoute = useRoute();
+
+    let {context, currRoute} = useContext(routerContext) || {};
     if (activeClassName && currRoute?.routePath) {
         let result = getPathResult(url.pathname, currRoute?.routePath)
         if (result.success) {
@@ -215,13 +228,16 @@ const Link = React.forwardRef(({href, to, children, activeClassName, className, 
         if(!currRoute) {
             return;
         }
+        if(!context) {
+            return;
+        }
         let match = currRoute.getMatchingRoute(url.pathname);
         let asyncPage = match?.reactEl?.props?.asyncPage;
         if(!asyncPage) {
             return;
         }
         asyncPage().then(page => {
-            window._GreenJSAsyncPages = {...(window._GreenJSAsyncPages || {}), [match.matchResult.routePath]: page.default}
+            context.asyncPages = {...(context.asyncPages || {}), [match.matchResult.routePath]: page.default}
         })
     }
 
@@ -251,8 +267,8 @@ const Link = React.forwardRef(({href, to, children, activeClassName, className, 
 });
 
 const Redirect = ({to, push}) => {
+    let {context, currRoute} = useContext(routerContext) || {};
     ensureHistoryPatched();
-    let currRoute = useRoute();
     let match = currRoute.getMatchingRoute(to);
     if(!match) {
         throw new Error("Invalid redirect target, could not find route: "+to);
@@ -263,7 +279,7 @@ const Redirect = ({to, push}) => {
         } else {
             history.replaceState(null, "", to);
         }
-    }, [window._GreenJsPushStateListeners]);
+    }, [context.pushStateListeners]);
     return null;
 }
 

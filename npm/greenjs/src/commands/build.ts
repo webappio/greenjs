@@ -5,6 +5,9 @@ import {Command, Flags} from '@oclif/core'
 // import * as os from "os";
 import * as vite from 'vite';
 import react from "@vitejs/plugin-react";
+import {writeFile} from 'fs';
+import BaseIndex from "../baseindex";
+import GenerateIndex from "../baseindex";
 
 export default class Build extends Command {
   static description = 'Make a production build of the project'
@@ -29,17 +32,27 @@ Source has been written to the dist/ folder!
     // this.log(render("/", {}));
 
     this.log("Building...")
-    await vite.build({
-      plugins: [react()],
+    const buildResults = await vite.build({
+      plugins: [
+        react(),
+      ],
       publicDir: "dist",
       build: {
         rollupOptions: {
-          // input: {
-          //   main: "./App.jsx"
-          // },
+          input: {
+            main: "./src/entry-client.jsx"
+          },
         }
       }
     });
+    if (!("output" in buildResults)) {
+      throw new Error("Invalid build results from vite")
+    }
+    await new Promise((resolve, reject) => writeFile(
+      "./dist/index.html",
+      GenerateIndex("", "", `<script type="module" src="${buildResults.output[0].fileName}"></script>`),
+      err => err ? reject(err) : resolve(err))
+    )
 
     // @ts-ignore
     // const {render} = await import("./dist/server/entry-server.js");
