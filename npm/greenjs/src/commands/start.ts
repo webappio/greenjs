@@ -1,6 +1,7 @@
 import {Command, Flags} from '@oclif/core'
 import {createServer} from 'vite'
 import react from '@vitejs/plugin-react';
+import GreenJSEntryPlugin from "../greenjs-entry-plugin";
 
 
 export default class Start extends Command {
@@ -28,12 +29,16 @@ Pre-bundling dependencies:
   async run() {
     const {args, flags} = await this.parse(Start)
     const server = await createServer({
-      plugins: [react()],
+      plugins: [
+        react(),
+        GreenJSEntryPlugin(),
+      ],
+      publicDir: "dist",
       server: {
         host: flags.host,
       }
     });
     await server.listen();
-    server.printUrls();
+    // server.printUrls();
   }
 }
