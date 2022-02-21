@@ -9,6 +9,7 @@ import {writeFile} from 'fs';
 import {GenerateIndex, GenerateEntryClient, GenerateEntryServer} from "../resources";
 import type { LoadResult, ResolveIdResult } from 'rollup';
 import GreenJSEntryPlugin from "../greenjs-entry-plugin";
+import * as path from "path";
 
 export default class Build extends Command {
   static description = 'Make a production build of the project'
@@ -39,18 +40,25 @@ Source has been written to the dist/ folder!
         GreenJSEntryPlugin(),
       ],
       publicDir: "dist",
+      build: {
+        ssr: true,
+        rollupOptions: {
+          input: {
+            "main": "@greenjs-entry-server.jsx",
+          },
+          output: {
+            format: "commonjs",
+          }
+        },
+      },
     });
-    // if (!("output" in buildResults)) {
-    //   throw new Error("Invalid build results from vite")
-    // }
-    // await new Promise((resolve, reject) => writeFile(
-    //   "./dist/index.html",
-    //   GenerateIndex("", "", `<script type="module" src="${buildResults.output[0].fileName}"></script>`),
-    //   err => err ? reject(err) : resolve(err))
-    // )
 
     // @ts-ignore
-    // const {render} = await import("./dist/server/entry-server.js");
+    // const {render} = await import("./dist/" + buildResults?.output[0].fileName);
+    const {render} = await import(path.resolve("dist", buildResults?.output[0].fileName));
+    const ctx = {};
+    this.log(render("http://localhost/", ctx));
+    console.log(ctx);
 
     this.log(`Source has been written to the dist/ folder!`)
   }

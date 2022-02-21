@@ -11,7 +11,6 @@ export default function GreenJSEntryPlugin(): PluginOption {
       custom?: CustomPluginOptions;
       ssr?: boolean;
     }): Promise<ResolveIdResult> | ResolveIdResult {
-      console.log("resolve: " +source);
       if(basename(source) === "index.html") {
         return {id: 'index.html'};
       }
@@ -23,7 +22,6 @@ export default function GreenJSEntryPlugin(): PluginOption {
       }
     },
     load(id: string, options?: { ssr?: boolean }): Promise<LoadResult> | LoadResult {
-      console.log("load: " + id);
       if(id === 'index.html') {
         return GenerateIndex("", "", `<script type="module" src="@greenjs-entry-client.jsx"></script>`);
       }
@@ -35,7 +33,6 @@ export default function GreenJSEntryPlugin(): PluginOption {
       }
     },
     transform(code: string, id: string, options?: { ssr?: boolean }): Promise<TransformResult> | TransformResult {
-      console.log("transform: " + id);
       if(id === "index.html") {
         return GenerateIndex("", "", `<script type="module" src="@greenjs-entry-client.jsx"></script>`);
       }

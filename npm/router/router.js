@@ -1,18 +1,18 @@
 import React, {useEffect, useState, useContext} from "react";
 
 const routerContext = React.createContext({
-    staticPath: null,
+    staticURL: null,
     currRoute: null,
     context: {},
     setCurrRoute: route => null,
 });
 
-const Router = ({staticPath, context, children}) => {
+const Router = ({staticURL, context, children}) => {
     const [route, setCurrRoute] = useState(null);
     const currRouter = useContext(routerContext) || {};
     return <routerContext.Provider
         value={{
-            staticPath: staticPath || currRouter.staticPath,
+            staticURL: staticURL || currRouter.staticURL,
             currRoute: route,
             setCurrRoute: setCurrRoute,
             context: context || {},
@@ -82,7 +82,7 @@ const RouteView = ({route, routePath}) => {
 }
 
 const ensureHistoryPatched = () => {
-    if(!window) {
+    if(typeof window === "undefined") {
         return; //SSR
     }
     const {context} = useContext(routerContext);
@@ -117,27 +117,31 @@ const Switch = ({children}) => {
     }
 
     const {context, setCurrRoute} = RouterContext;
+    const loc = useLocation();
     ensureHistoryPatched();
 
-    const [pathname, setPathname] = React.useState(window.location.pathname);
+    const [pathname, setPathname] = React.useState(loc.pathname);
     if (typeof children === "object" && children?.props?.path) {
         children = [children];
     }
     if (typeof children !== "object" || !children.length) {
         throw new Error("Invalid Switch children, expected a list of Route")
     }
-    window.addEventListener("popstate", e => {
-        setPathname(window.location.pathname);
-    })
 
-    useEffect(() => {
-        const listener = (x) => setPathname(x);
-        context.pushStateListeners = [...(context.pushStateListeners || []), listener];
-        listener(window.location.pathname); //in case someone changed location in a useEffect
-        return () => {
-            context.pushStateListeners = context.pushStateListeners.filter(x => x !== listener);
-        }
-    }, [])
+    if(typeof window !== "undefined") {
+        window.addEventListener("popstate", e => {
+            setPathname(window.location.pathname);
+        })
+
+        useEffect(() => {
+            const listener = (x) => setPathname(x);
+            context.pushStateListeners = [...(context.pushStateListeners || []), listener];
+            listener(window.location.pathname); //in case someone changed location in a useEffect
+            return () => {
+                context.pushStateListeners = context.pushStateListeners.filter(x => x !== listener);
+            }
+        }, [])
+    }
 
     const getBestRoute = path => {
         let bestMatchResult = null;
@@ -198,10 +202,11 @@ const Route = ({path, asyncPage, children}) => {
 
 const Link = React.forwardRef(({href, to, children, activeClassName, className, ...props}, ref) => {
     ensureHistoryPatched();
+    const loc = useLocation();
     if (!href && to) {
         href = to;
     }
-    const url = new URL(href, document.location.href);
+    const url = new URL(href, loc.href);
 
     let {context, currRoute} = useContext(routerContext) || {};
     if (activeClassName && currRoute?.routePath) {
@@ -215,7 +220,7 @@ const Link = React.forwardRef(({href, to, children, activeClassName, className, 
     }
     let externalHost = false;
     try {
-        if (url.host !== document.location.host) {
+        if (url.host !== loc.host) {
             externalHost = true;
         }
     } catch (e) {
@@ -287,4 +292,12 @@ const useRoute = () => {
     return React.useContext(routerContext)?.currRoute;
 }
 
-export {Router, Switch, Route, Link, Redirect, useRoute}
+const useLocation = () => {
+    const routerCtx = React.useContext(routerContext);
+    if(typeof document !== "undefined") {
+        return document.location;
+    }
+    return new URL(routerCtx.staticURL || "");
+}
+
+export {Router, Switch, Route, Link, Redirect, useRoute, useLocation}
