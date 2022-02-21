@@ -86,16 +86,16 @@ class headState {
     }
 }
 
-const Head = ({children}) => {
-    window._gjsHeadState ??= new headState();
+const _gjsHeadState = new headState();
 
+const Head = ({children}) => {
     const [tag, setTag] = React.useState("");
     React.useEffect(() => {
-        const innerTag = window._gjsHeadState.getNewTagId();
+        const innerTag = _gjsHeadState.getNewTagId();
         setTag(innerTag);
         return () => {
-            delete window._gjsHeadState.tags[innerTag];
-            window._gjsHeadState.regenerateHead();
+            delete _gjsHeadState.tags[innerTag];
+            _gjsHeadState.regenerateHead();
         }
     }, []);
 
@@ -129,8 +129,8 @@ const Head = ({children}) => {
             return;
         }
 
-        window._gjsHeadState.tags[tag] = elements;
-        window._gjsHeadState.regenerateHead();
+        _gjsHeadState.tags[tag] = elements;
+        _gjsHeadState.regenerateHead();
 
     }, [JSON.stringify(elements), tag]);
     return null;
