@@ -17,13 +17,16 @@ const GenerateEntryServer = () => `
 import ReactDOMServer from 'react-dom/server'
 import App from './App'
 import {Router} from "@greenio/router";
+import {SSRContext} from "@greenio/head";
 
 export async function render(url, context) {
     const element = <Router staticURL={url} context={context}>
-      <App />
+      <SSRContext.Provider value={{context}}>
+        <App />
+      </SSRContext.Provider>
     </Router>;
     ReactDOMServer.renderToStaticMarkup(element);
-    await Promise.all(Object.values(context.routePromises));
+    await Promise.all([...Object.values(context.routePromises), context.headPromise]);
     return ReactDOMServer.renderToString(element);
 }
 `.trim()

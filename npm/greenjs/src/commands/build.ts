@@ -5,16 +5,22 @@ import {Command, Flags} from '@oclif/core'
 // import * as os from "os";
 import * as vite from 'vite';
 import react from "@vitejs/plugin-react";
-import {writeFile} from 'fs';
-import {GenerateIndex, GenerateEntryClient, GenerateEntryServer} from "../resources";
-import type {LoadResult, ResolveIdResult} from 'rollup';
+import {writeFile, unlink} from 'fs';
+import {GenerateIndex} from "../resources";
 import GreenJSEntryPlugin from "../greenjs-entry-plugin";
 import * as path from "path";
+
+interface HeadTag {
+  type: string,
+  attrs: any, //TODO map of string to [bool, string]
+  innerText: string,
+}
 
 interface RenderResult {
   path: string;
   appBody: string;
   routes: string[];
+  headTags: HeadTag[];
 }
 
 export default class Build extends Command {
@@ -35,13 +41,19 @@ Source has been written to the dist/ folder!
   async renderPage(render: (path: string, ctx: object) => Promise<string>, path: string): Promise<RenderResult> {
     const ctx = {
       routes: {},
+      headTags: [],
     };
     const appBody = await render("http://localhost" + path, ctx);
     return {
       path,
       appBody,
       routes: Object.keys(ctx.routes),
+      headTags: ctx.headTags,
     }
+  }
+
+  static writeFile(path: string, data: string): Promise<void> {
+    return new Promise((resolve, reject) => writeFile(path, data, err => err ? reject(err) : resolve()));
   }
 
   async renderAllPages(render: (path: string, ctx: object) => Promise<string>) {
@@ -64,16 +76,24 @@ Source has been written to the dist/ folder!
           filename = result.path + ".html";
         }
 
-        await new Promise((resolve, reject) => writeFile(
+        await Build.writeFile(
           path.join("dist", filename),
-          GenerateIndex("", result.appBody, `<script src="client.js"></script>`),
-          err => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(err);
-            }
-          }))
+          GenerateIndex(
+            result.headTags.map(
+              ({type, attrs, innerText}) => {
+                let attrList = Object.keys(attrs ?? {}).map(key => {
+                  if(typeof attrs[key] === "boolean") {
+                    return key;
+                  } else {
+                    return key+`="`+attrs[key]+`"`
+                  }
+                });
+                return `<${type}${attrList.length > 0 ? " " : ""}${attrList.join(" ")}>${innerText || ""}</${type}>`
+              }).join("\n"),
+            result.appBody,
+            `<script src="client.js"></script>`
+          ),
+        )
       }
     }
   }
@@ -104,7 +124,11 @@ Source has been written to the dist/ folder!
 
     // @ts-ignore
     const {render} = await import(path.resolve("dist", "server.js"));
-    this.renderAllPages(render);
+    await this.renderAllPages(render);
+    await new Promise((resolve, reject) => unlink(
+      path.resolve("dist", "server.js"),
+        err => err ? reject(err) : resolve(err)
+    ));
 
     this.log(`Source has been written to the dist/ folder!`)
   }

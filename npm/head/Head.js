@@ -12,15 +12,18 @@ class headState {
         return this.currTagId++;
     }
 
-    regenerateHead() {
+    regenerateHead(ssrContext) {
         let baseElement = null;
         let titleElement = null;
         let namedMetaElements = {}; //keyed by <meta name=...>
         let otherElements = []; //usually <meta charset=...>
 
-        [...document.head.children]
-            .filter(x => x.hasAttribute("gjs"))
-            .forEach(x => document.head.removeChild(x));
+        //we are on the browser
+        if(!ssrContext) {
+            [...document.head.children]
+                .filter(x => x.hasAttribute("gjs"))
+                .forEach(x => document.head.removeChild(x));
+        }
 
         let keys = Object.keys(this.tags);
         keys.sort((a, b) => +a - +b);
@@ -57,31 +60,35 @@ class headState {
         }
         elements.push(...Object.values(namedMetaElements));
         elements.push(...otherElements);
-        for(let {type, attrs, innerText} of elements) {
-            const domElement = document.createElement(type);
-            if(innerText) {
-                if(type === "script") {
-                    domElement.innerHTML = innerText;
-                    if(!attrs.type) {
-                        attrs.type = "text/javascript";
+        if(ssrContext) {
+            ssrContext.context.headTags = elements;
+        } else {
+            for (let {type, attrs, innerText} of elements) {
+                const domElement = document.createElement(type);
+                if (innerText) {
+                    if (type === "script") {
+                        domElement.innerHTML = innerText;
+                        if (!attrs.type) {
+                            attrs.type = "text/javascript";
+                        }
+                    } else {
+                        domElement.innerText = innerText;
                     }
-                } else {
-                    domElement.innerText = innerText;
                 }
-            }
-            for(let attr of Object.keys(attrs ?? {})) {
-                if(typeof attr === "boolean") {
-                    if(attr) {
-                        domElement.setAttribute(attr, "");
+                for (let attr of Object.keys(attrs ?? {})) {
+                    if (typeof attr === "boolean") {
+                        if (attr) {
+                            domElement.setAttribute(attr, "");
+                        }
+                    } else if (typeof attr === "string") {
+                        domElement.setAttribute(attr, attrs[attr]);
+                    } else {
+                        throw new Error("Invalid contents for Head tag element attribute: " + key + "=" + attrs[key]);
                     }
-                } else if(typeof attr === "string") {
-                    domElement.setAttribute(attr, attrs[attr]);
-                } else {
-                    throw new Error("Invalid contents for Head tag element attribute: "+key+"="+attrs[key]);
                 }
+                domElement.setAttribute("gjs", '');
+                document.head.appendChild(domElement);
             }
-            domElement.setAttribute("gjs", '');
-            document.head.appendChild(domElement);
         }
     }
 }
@@ -89,13 +96,12 @@ class headState {
 const _gjsHeadState = new headState();
 
 const Head = ({children}) => {
-    const [tag, setTag] = React.useState("");
+    const [tag, setTag] = React.useState(_gjsHeadState.getNewTagId());
+    const ssrContext = React.useContext(SSRContext);
     React.useEffect(() => {
-        const innerTag = _gjsHeadState.getNewTagId();
-        setTag(innerTag);
         return () => {
-            delete _gjsHeadState.tags[innerTag];
-            _gjsHeadState.regenerateHead();
+            delete _gjsHeadState.tags[tag];
+            _gjsHeadState.regenerateHead(ssrContext);
         }
     }, []);
 
@@ -115,10 +121,13 @@ const Head = ({children}) => {
         }
         let element = {type};
         if(children) {
-            if(typeof children !== "string") {
-                throw new Error("Invalid contents for Head tag element: "+children);
+            if(typeof children.length === "number") {
+                element.innerText = [...children].map(x => String(x)).join("");
+            } else if(typeof children !== "string") {
+                element.innerText = children;
+            } else {
+            throw new Error("Invalid contents for Head tag element: " + children);
             }
-            element.innerText = children;
         }
         element.attrs = {...attrs};
         return element;
@@ -131,9 +140,23 @@ const Head = ({children}) => {
 
         _gjsHeadState.tags[tag] = elements;
         _gjsHeadState.regenerateHead();
-
     }, [JSON.stringify(elements), tag]);
+
+    if(ssrContext?.context && !ssrContext?.context?.headPromise) {
+        ssrContext.context.headPromise = (async () => {
+            _gjsHeadState.tags[tag] = elements;
+            _gjsHeadState.regenerateHead(ssrContext);
+        })();
+    }
+
     return null;
 }
 
-export {Head}
+const SSRContext = React.createContext({
+    context: {
+        headTags: [],
+        headPromise: null,
+    }
+})
+
+export {Head, SSRContext}

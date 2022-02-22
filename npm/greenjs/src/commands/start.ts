@@ -39,6 +39,6 @@ Pre-bundling dependencies:
       }
     });
     await server.listen();
-    // server.printUrls();
+    server.printUrls();
   }
 }
