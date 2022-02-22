@@ -18,12 +18,13 @@ import ReactDOMServer from 'react-dom/server'
 import App from './App'
 import {Router} from "@greenio/router";
 
-export function render(url, context) {
-  return ReactDOMServer.renderToString(
-    <Router staticURL={url} context={context}>
+export async function render(url, context) {
+    const element = <Router staticURL={url} context={context}>
       <App />
-    </Router>
-  )
+    </Router>;
+    ReactDOMServer.renderToStaticMarkup(element);
+    await Promise.all(Object.values(context.routePromises));
+    return ReactDOMServer.renderToString(element);
 }
 `.trim()
 

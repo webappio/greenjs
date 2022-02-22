@@ -32,11 +32,6 @@ export default function GreenJSEntryPlugin(): PluginOption {
         return GenerateEntryServer();
       }
     },
-    transform(code: string, id: string, options?: { ssr?: boolean }): Promise<TransformResult> | TransformResult {
-      if(id === "index.html") {
-        return GenerateIndex("", "", `<script type="module" src="@greenjs-entry-client.jsx"></script>`);
-      }
-    },
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
         if(req?.url?.endsWith('.html') || req?.url === "/") {

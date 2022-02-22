@@ -5,7 +5,7 @@ export default function App() {
   return (
     <>
         <Head>
-            <title>app!</title>
+            <title>app</title>
         </Head>
       <nav>
         <ul>
