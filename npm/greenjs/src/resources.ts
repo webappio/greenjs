@@ -26,7 +26,7 @@ export async function render(url, context) {
       </SSRContext.Provider>
     </Router>;
     ReactDOMServer.renderToStaticMarkup(element);
-    await Promise.all([...Object.values(context.routePromises), context.headPromise]);
+    await Promise.all([...Object.values(context.routePromises || {}), context.headPromise].filter(x => !!x));
     return ReactDOMServer.renderToString(element);
 }
 `.trim()

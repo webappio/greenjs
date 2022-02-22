@@ -6,7 +6,7 @@ export default function About() {
         <Head>
             <title>About page</title>
         </Head>
-      <h1>About</h1>
+      <h1>About this page</h1>
     </>
   )
 }

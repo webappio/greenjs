@@ -2,6 +2,7 @@ import {Command, Flags} from '@oclif/core'
 import {createServer} from 'vite'
 import react from '@vitejs/plugin-react';
 import GreenJSEntryPlugin from "../greenjs-entry-plugin";
+import {GenerateEntryServer} from "../resources";
 
 
 export default class Start extends Command {
@@ -28,16 +29,36 @@ Pre-bundling dependencies:
 
   async run() {
     const {args, flags} = await this.parse(Start)
+    const knownRoutes = new Set();
+    let checkKnownRoute: (route: string) => Promise<void> = async route => {};
+    let isKnownRoute = async (route: string) => {
+      await checkKnownRoute(route);
+      return knownRoutes.has(route); //TODO :param and *param
+    };
     const server = await createServer({
       plugins: [
         react(),
-        GreenJSEntryPlugin(),
+        GreenJSEntryPlugin(isKnownRoute),
       ],
       publicDir: "dist",
       server: {
         host: flags.host,
-      }
+      },
     });
+    (async () => {
+      const {render} = await server.ssrLoadModule("/@greenjs-entry-server.jsx");
+      checkKnownRoute = async route => {
+        if(knownRoutes.has(route)) {
+          return;
+        }
+        const ctx = {
+          routes: {},
+          headTags: [],
+        };
+        await render("http://localhost" + route, ctx);
+        Object.keys(ctx.routes).forEach(x => knownRoutes.add(x));
+      }
+    })().catch(x => console.error(x));
     await server.listen();
     server.printUrls();
   }
