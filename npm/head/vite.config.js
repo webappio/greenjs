@@ -9,5 +9,13 @@ module.exports = defineConfig({
             name: 'Head',
             fileName: (format) => `greenjs-head.${format}.js`
         },
+        rollupOptions: {
+            external: ['react'],
+            output: {
+                globals: {
+                    react: 'React'
+                }
+            }
+        }
     }
 })
