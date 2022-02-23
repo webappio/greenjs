@@ -10,3 +10,4 @@ dist/*
 !dist/favicon.ico
 !dist/apple-touch-icon.png
 !dist/browserconfig.xml
+built-app.css

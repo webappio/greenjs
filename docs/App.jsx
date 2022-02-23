@@ -1,16 +1,14 @@
 'use strict';
 
 import React from "react";
-import {Render} from "@greenio/react";
 import {Head} from "@greenio/head";
-import {Route, Router, Redirect} from "@greenio/router";
+import {Route, Router, Redirect, Switch} from "@greenio/router";
 
-const Site = () => {
+export default function Site () {
 	return <div>
 		<Head>
 			<title>GreenJS Docs</title>
 			<meta name="cache-control" content="public" />
-			<link rel="stylesheet" href="/App.css" />
 			<link rel="stylesheet" href="/Site.css" />
 			<meta name="viewport" content="width=device-width, initial-scale=1" />
 			<script async src="https://www.googletagmanager.com/gtag/js?id=G-8QM8LHVH3P" />
@@ -23,7 +21,7 @@ const Site = () => {
 			`}
 			</script>
 		</Head>
-		<Router>
+		<Switch>
 			<Route asyncPage={() => import("./src/topics/getting-started/getting-started")} path="/docs/getting-started" />
 			<Route path="/docs/hosting" asyncPage={() => import("./src/topics/getting-started/hosting")} />
 			<Route path="/docs/examples" asyncPage={() => import("./src/topics/getting-started/examples")} />
@@ -38,8 +36,6 @@ const Site = () => {
 			<Route path="/docs/vite-comparison" asyncPage={() => import("./src/topics/comparisons/vite")} />
 			<Route path="/docs/"><Redirect to="/docs/getting-started"/></Route>
 			<Route path="/" asyncPage={() => import("./src/landing")}/>
-		</Router>
+		</Switch>
 	</div>
 }
-
-Render(<Site />);

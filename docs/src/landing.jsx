@@ -40,7 +40,7 @@ export default function Landing() {
         </Head>
         <Navbar />
         <div className="container flex flex-col my-8 items-center px-6 max-w-full md:max-w-[75%] md:my-20 lg:my-32">
-            <h1 className="text-4xl font-bold text-center">Add performant React pages to an existing site.</h1>
+            <h1 className="text-4xl font-bold text-center">Add performant React pages to an existing site</h1>
             <p className="text-3xl text-center my-12">GreenJS combines esbuild, Go, and prerendering into a great developer experience for React users.</p>
             <div className="flex space-x-6">
                 <Link

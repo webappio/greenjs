@@ -2,9 +2,8 @@
   "name": "@greenio/docs",
   "version": "1.0.0",
   "dependencies": {
-    "@greenio/head": "0.0.6",
-    "@greenio/react": "0.0.4",
-    "@greenio/router": "0.0.11",
+    "@greenio/head": "0.0.9",
+    "@greenio/router": "^0.0.15",
     "@mui/material": "^5.2.5",
     "hamburger-react": "^2.4.1",
     "prismjs": "^1.26.0",
@@ -14,13 +13,13 @@
   "scripts": {
     "build": "tailwindcss -i App.css -o ./dist/Site.css --minify && greenjs build",
     "start": "mkdir -p dist && concurrently 'greenjs start' 'tailwindcss -i App.css -o ./dist/Site.css --watch'",
-    "start-dev": "mkdir -p dist && concurrently 'go run ../main.go start' 'tailwindcss -i App.css -o ./dist/Site.css --watch'"
+    "start-dev": "mkdir -p dist && concurrently '../npm/greenjs/bin/dev start' 'tailwindcss -i App.css -o ./dist/Site.css --watch'"
   },
   "devDependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "concurrently": "^6.5.1",
-    "greenjs": "^1.1.2",
+    "greenjs": "^2.0.1",
     "tailwindcss": "^3.0.7"
   },
   "license": "MIT",
