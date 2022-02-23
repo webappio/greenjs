@@ -5,7 +5,7 @@ import {Command, Flags} from '@oclif/core'
 // import * as os from "os";
 import * as vite from 'vite';
 import react from "@vitejs/plugin-react";
-import {writeFile, unlink} from 'fs';
+import {writeFile, unlink, mkdir} from 'fs';
 import {GenerateIndex} from "../resources";
 import GreenJSEntryPlugin from "../greenjs-entry-plugin";
 import * as path from "path";
@@ -52,8 +52,22 @@ Source has been written to the dist/ folder!
     }
   }
 
-  static writeFile(path: string, data: string): Promise<void> {
-    return new Promise((resolve, reject) => writeFile(path, data, err => err ? reject(err) : resolve()));
+  static writeFile(filePath: string, data: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      mkdir(path.dirname(filePath), {recursive: true}, err => {
+        if(err) {
+          reject(err);
+          return;
+        }
+        writeFile(filePath, data, err => {
+          if(err) {
+            reject(err);
+            return;
+          }
+          resolve();
+        })
+      })
+    });
   }
 
   async renderAllPages(render: (path: string, ctx: object) => Promise<string>) {
