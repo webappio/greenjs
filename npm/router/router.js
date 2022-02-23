@@ -274,10 +274,6 @@ const Link = React.forwardRef(({href, to, children, activeClassName, className, 
 const Redirect = ({to, push}) => {
     let {context, currRoute} = useContext(routerContext) || {};
     ensureHistoryPatched();
-    let match = currRoute.getMatchingRoute(to);
-    if(!match) {
-        throw new Error("Invalid redirect target, could not find route: "+to);
-    }
     useEffect(() => {
         if(push) {
             history.pushState(null, "", to);
