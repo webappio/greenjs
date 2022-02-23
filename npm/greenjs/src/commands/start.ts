@@ -1,5 +1,5 @@
 import {Command, Flags} from '@oclif/core'
-import {createServer} from 'vite'
+import {createServer, ProxyOptions} from 'vite'
 import react from '@vitejs/plugin-react';
 import GreenJSEntryPlugin from "../greenjs-entry-plugin";
 import {GenerateEntryServer} from "../resources";
@@ -25,6 +25,7 @@ Pre-bundling dependencies:
 
   static flags = {
     host: Flags.string({char: 'h', description: 'Which address to listen to', required: false}),
+    'upstream-addr': Flags.string({char: 'u', description: 'Where to forward upstream requests', required: false})
   };
 
   async run() {
@@ -35,10 +36,11 @@ Pre-bundling dependencies:
       await checkKnownRoute(route);
       return knownRoutes.has(route); //TODO :param and *param
     };
+
     const server = await createServer({
       plugins: [
         react(),
-        GreenJSEntryPlugin(isKnownRoute),
+        GreenJSEntryPlugin(isKnownRoute, flags['upstream-addr']),
       ],
       publicDir: "dist",
       server: {

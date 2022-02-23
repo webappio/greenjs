@@ -21,10 +21,12 @@
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-plugins": "^2.0.1",
     "@vitejs/plugin-react": "^1.2.0",
+    "http-proxy-middleware": "^2.0.3",
     "vite": "^2.8.3"
   },
   "devDependencies": {
     "@types/babel__core": "^7.1.18",
+    "@types/http-proxy": "^1.17.8",
     "@types/node": "^16.9.4",
     "chai": "^4",
     "eslint": "^7.32.0",
