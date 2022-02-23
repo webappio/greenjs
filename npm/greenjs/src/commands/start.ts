@@ -3,6 +3,7 @@ import {createServer, ProxyOptions} from 'vite'
 import react from '@vitejs/plugin-react';
 import GreenJSEntryPlugin from "../greenjs-entry-plugin";
 import {GenerateEntryServer} from "../resources";
+import {routeMatches} from "../routeMatches";
 
 
 export default class Start extends Command {
@@ -30,11 +31,25 @@ Pre-bundling dependencies:
 
   async run() {
     const {args, flags} = await this.parse(Start)
-    const knownRoutes = new Set();
+    const knownRoutes = new Set<string>();
+    const knownNotRoutes = new Set<string>();
     let checkKnownRoute: (route: string) => Promise<void> = async route => {};
-    let isKnownRoute = async (route: string) => {
-      await checkKnownRoute(route);
-      return knownRoutes.has(route); //TODO :param and *param
+    let isKnownRoute = async (path: string) => {
+      try {
+        await checkKnownRoute(path);
+      } catch (e) {
+        console.error(e);
+        return true; //on error, show it to the user
+      }
+      if(knownRoutes.has(path)) {
+        return true;
+      }
+      for(let route of knownRoutes) {
+        if(routeMatches(route, path)) {
+          return true;
+        }
+      }
+      return false;
     };
 
     const server = await createServer({

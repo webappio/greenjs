@@ -20,6 +20,7 @@ export default function App() {
       <Switch>
         <Route path="/" asyncPage={() => import("./pages/Home")} />
         <Route path="/env" asyncPage={() => import("./pages/Env")} />
+        <Route path="/env/:envParam" asyncPage={() => import("./pages/Env")} />
         <Route path="/about" asyncPage={() => import("./pages/About")} />
       </Switch>
     </>

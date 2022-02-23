@@ -28,7 +28,7 @@ export default function GreenJSEntryPlugin(
     load(id: string, options?: { ssr?: boolean }): Promise<LoadResult> | LoadResult {
       // console.log("load: " + id);
       if(id === 'index.html') {
-        return GenerateIndex("", "", `<script type="module" src="@greenjs-entry-client.jsx"></script>`);
+        return GenerateIndex("", "", `<script type="module" src="/@greenjs-entry-client.jsx"></script>`);
       }
       if(id === 'entry-client.jsx') {
         return GenerateEntryClient();
@@ -46,7 +46,6 @@ export default function GreenJSEntryPlugin(
             //for requests to get to this middleware but not be a route, they're legitimate 404s or for the upstream
             if(proxy) {
               req.url = req.originalUrl;
-              console.log("Forwarding...")
               // @ts-ignore
               proxy(req, res, next);
               return;

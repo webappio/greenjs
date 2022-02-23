@@ -1,6 +1,6 @@
 {
   "name": "@greenio/router",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Replacement for react-router-dom for GreenJS",
   "main": "router.js",
   "scripts": {

@@ -289,6 +289,7 @@ const Redirect = ({to, push}) => {
 }
 
 const useRoute = () => {
+    //TODO make this work with SSR
     return React.useContext(routerContext)?.currRoute;
 }
 
