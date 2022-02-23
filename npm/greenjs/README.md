@@ -74,10 +74,11 @@ Start a development server for the project
 
 ```
 USAGE
-  $ greenjs start [-h <value>]
+  $ greenjs start [-h <value>] [-u <value>]
 
 FLAGS
-  -h, --host=<value>  Which address to listen to
+  -h, --host=<value>           Which address to listen to
+  -u, --upstream-addr=<value>  Where to forward upstream requests
 
 DESCRIPTION
   Start a development server for the project
