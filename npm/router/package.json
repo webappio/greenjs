@@ -1,11 +1,11 @@
 {
   "name": "@greenio/router",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Replacement for react-router-dom for GreenJS",
-  "main": "router.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf dist && mkdir dist && cp package.json package-lock.json dist/ && esbuild --bundle --sourcemap router.js --external:react --outdir=dist --format=esm --loader:.js=jsx"
+    "build": "vite build",
+    "prepack": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,15 @@
     "react-dom": ">=16.8"
   },
   "devDependencies": {
-    "esbuild": "^0.14.22"
+    "vite": "^2.8.4"
   },
-  "type": "module"
+  "files": ["dist"],
+  "main": "./dist/greenjs-router.umd.js",
+  "module": "./dist/greenjs-router.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/greenjs-router.es.js",
+      "require": "./dist/greenjs-router.umd.js"
+    }
+  }
 }
