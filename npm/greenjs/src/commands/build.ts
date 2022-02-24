@@ -5,7 +5,7 @@ import {Command, Flags} from '@oclif/core'
 // import * as os from "os";
 import * as vite from 'vite';
 import react from "@vitejs/plugin-react";
-import {writeFile, unlink, mkdir} from 'fs';
+import {writeFile, rm, mkdir} from 'fs';
 import {GenerateIndex} from "../resources";
 import GreenJSEntryPlugin from "../greenjs-entry-plugin";
 import * as path from "path";
@@ -55,12 +55,12 @@ Source has been written to the dist/ folder!
   static writeFile(filePath: string, data: string): Promise<void> {
     return new Promise((resolve, reject) => {
       mkdir(path.dirname(filePath), {recursive: true}, err => {
-        if(err) {
+        if (err) {
           reject(err);
           return;
         }
         writeFile(filePath, data, err => {
-          if(err) {
+          if (err) {
             reject(err);
             return;
           }
@@ -70,7 +70,7 @@ Source has been written to the dist/ folder!
     });
   }
 
-  async renderAllPages(render: (path: string, ctx: object) => Promise<string>) {
+  async renderAllPages(render: (path: string, ctx: object) => Promise<string>, clientScriptFileName: string) {
     const pathsSeen = new Set<string>();
     const pathsToExplore = new Set<string>();
     pathsToExplore.add("/");
@@ -96,16 +96,16 @@ Source has been written to the dist/ folder!
             result.headTags.map(
               ({type, attrs, innerText}) => {
                 let attrList = Object.keys(attrs ?? {}).map(key => {
-                  if(typeof attrs[key] === "boolean") {
+                  if (typeof attrs[key] === "boolean") {
                     return key;
                   } else {
-                    return key+`="`+attrs[key]+`"`
+                    return key + `="` + attrs[key] + `"`
                   }
                 });
                 return `<${type}${attrList.length > 0 ? " " : ""}${attrList.join(" ")}>${innerText || ""}</${type}>`
               }).join("\n"),
             result.appBody,
-            `<script src="/client.js"></script>`
+            `<script src="` + clientScriptFileName + `" type="module"></script>`
           ),
         )
       }
@@ -116,32 +116,57 @@ Source has been written to the dist/ folder!
     const {args, flags} = await this.parse(Build)
 
     this.log("Building...")
-    await vite.build({
-      plugins: [
-        react(),
-        GreenJSEntryPlugin(),
-      ],
-      publicDir: "dist",
-      build: {
-        ssr: true,
-        rollupOptions: {
-          input: {
-            "server": "@greenjs-entry-server.jsx",
-            "client": "@greenjs-entry-client.jsx",
-          },
-          output: {
-            format: "commonjs",
+    const [clientResult, serverResult] = await Promise.all([
+      vite.build({
+        plugins: [
+          react(),
+          GreenJSEntryPlugin()
+        ],
+        publicDir: "dist",
+        build: {
+          outDir: "dist",
+          rollupOptions: {
+            input: {
+              "client": "@greenjs-entry-client.jsx",
+            },
+            output: {
+              format: "esm",
+            }
           }
+        }
+      }),
+      vite.build({
+        plugins: [
+          react(),
+          GreenJSEntryPlugin(),
+        ],
+        build: {
+          outDir: "server-build",
+          ssr: true,
+          minify: false,
+          rollupOptions: {
+            input: {
+              "server": "@greenjs-entry-server.jsx",
+            },
+          },
         },
-      },
-    });
+      })
+    ]);
+
+    let clientScriptFileName: string;
+    if ("output" in clientResult) {
+      clientScriptFileName = clientResult.output[0].fileName;
+    } else {
+      this.log("Internal error: Could not find output file name")
+      process.exit(1);
+    }
 
     // @ts-ignore
-    const {render} = await import(path.resolve("dist", "server.js"));
-    await this.renderAllPages(render);
-    await new Promise((resolve, reject) => unlink(
-      path.resolve("dist", "server.js"),
-        err => err ? reject(err) : resolve(err)
+    const {render} = await import(path.resolve("server-build", "server.js"));
+    await this.renderAllPages(render, clientScriptFileName);
+    await new Promise((resolve, reject) => rm("server-build",
+      {recursive: true},
+      err => err ? reject(err) : resolve(err)
     ));
 
     this.log(`Source has been written to the dist/ folder!`)

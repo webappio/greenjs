@@ -1,4 +1,4 @@
-import {CustomPluginOptions, LoadResult, ResolveIdResult, TransformResult} from "rollup";
+import {CustomPluginOptions, LoadResult, ResolveIdResult, TransformResult, OutputOptions} from "rollup";
 import {GenerateEntryClient, GenerateEntryServer, GenerateIndex} from "./resources";
 import {PluginOption, send} from "vite";
 import {basename} from "path";
@@ -62,6 +62,6 @@ export default function GreenJSEntryPlugin(
           })
         })
       }
-    }
+    },
   }
 }
