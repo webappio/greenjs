@@ -26,6 +26,7 @@ Pre-bundling dependencies:
 
   static flags = {
     host: Flags.string({char: 'h', description: 'Which address to listen to', required: false}),
+    port: Flags.integer({char: 'p', description: 'Which port to listen to', required: false}),
     'upstream-addr': Flags.string({char: 'u', description: 'Where to forward upstream requests', required: false})
   };
 
@@ -60,6 +61,7 @@ Pre-bundling dependencies:
       publicDir: "dist",
       server: {
         host: flags.host,
+        port: flags.port,
       },
     });
     (async () => {

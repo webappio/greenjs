@@ -1,6 +1,6 @@
 {
   "name": "greenjs",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "GreenJS - Add React to existing sites",
   "author": "Colin Chartier",
   "bin": {
