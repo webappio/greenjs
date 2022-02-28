@@ -2,8 +2,8 @@
   "name": "@greenio/docs",
   "version": "1.0.0",
   "dependencies": {
-    "@greenio/head": "^0.0.11",
-    "@greenio/router": "^0.0.16",
+    "@greenio/head": "file:../npm/head",
+    "@greenio/router": "file:../npm/router",
     "@mui/material": "^5.2.5",
     "hamburger-react": "^2.4.1",
     "prismjs": "^1.26.0",
@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "greenjs build && tailwindcss -i App.css -o ./dist/Site.css --minify && git checkout -- dist",
-    "start": "mkdir -p dist && concurrently 'greenjs start' 'tailwindcss -i App.css -o ./dist/Site.css --watch'",
+    "start": "mkdir -p dist && concurrently '../npm/greenjs/bin/dev start --upstream-addr https://fundersclub.com/' 'tailwindcss -i App.css -o ./dist/Site.css --watch'",
     "start-dev": "mkdir -p dist && concurrently '../npm/greenjs/bin/dev start' 'tailwindcss -i App.css -o ./dist/Site.css --watch'"
   },
   "devDependencies": {

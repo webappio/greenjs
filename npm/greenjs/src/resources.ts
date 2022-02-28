@@ -21,7 +21,7 @@ import {SSRContext} from "@greenio/head";
 
 export async function render(url, context) {
     const element = <Router staticURL={url} context={context}>
-      <SSRContext.Provider value={{context}}>
+      <SSRContext.Provider value={{context: context}}>
         <App />
       </SSRContext.Provider>
     </Router>;

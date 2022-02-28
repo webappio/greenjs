@@ -93,15 +93,25 @@ class headState {
     }
 }
 
-const _gjsHeadState = new headState();
-
 const Head = ({children}) => {
-    const [tag, setTag] = React.useState(_gjsHeadState.getNewTagId());
     const ssrContext = React.useContext(SSRContext);
+    let gjsHeadState;
+    if(ssrContext) {
+        if(!ssrContext._gjsHeadState) {
+            ssrContext._gjsHeadState = new headState();
+        }
+        gjsHeadState = ssrContext._gjsHeadState;
+    } else {
+        if(!window._gjsHeadState) {
+            window._gjsHeadState = new headState();
+        }
+        gjsHeadState = window._gjsHeadState;
+    }
+    const [tag, setTag] = React.useState(gjsHeadState.getNewTagId());
     React.useEffect(() => {
         return () => {
-            delete _gjsHeadState.tags[tag];
-            _gjsHeadState.regenerateHead(ssrContext);
+            delete gjsHeadState.tags[tag];
+            gjsHeadState.regenerateHead(ssrContext);
         }
     }, []);
 
@@ -138,14 +148,14 @@ const Head = ({children}) => {
             return;
         }
 
-        _gjsHeadState.tags[tag] = elements;
-        _gjsHeadState.regenerateHead();
+        gjsHeadState.tags[tag] = elements;
+        gjsHeadState.regenerateHead();
     }, [JSON.stringify(elements), tag]);
 
     if(ssrContext?.context && !ssrContext?.context?.headPromise) {
         ssrContext.context.headPromise = (async () => {
-            _gjsHeadState.tags[tag] = elements;
-            _gjsHeadState.regenerateHead(ssrContext);
+            gjsHeadState.tags[tag] = elements;
+            gjsHeadState.regenerateHead(ssrContext);
         })();
     }
 
