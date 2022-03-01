@@ -110,6 +110,10 @@ const ensureHistoryPatched = () => {
     }
 }
 
+const switchContext = React.createContext({
+    currRoute: null,
+})
+
 const Switch = ({children}) => {
     const RouterContext = useContext(routerContext);
     if(!RouterContext) {
@@ -172,7 +176,11 @@ const Switch = ({children}) => {
         return null;
     }
 
-    return <RouteView route={result?.reactEl} routePath={result?.matchResult.routePath} />
+    return <switchContext.Provider value={{
+        currRoute: result.matchResult,
+    }}>
+        <RouteView route={result?.reactEl} routePath={result?.matchResult.routePath} />
+    </switchContext.Provider>
 }
 
 const Route = ({path, asyncPage, children}) => {
@@ -284,17 +292,20 @@ const Redirect = ({to, push}) => {
     return null;
 }
 
-const useRoute = () => {
-    //TODO make this work with SSR
-    return React.useContext(routerContext)?.currRoute;
-}
-
 const useLocation = () => {
     const routerCtx = React.useContext(routerContext);
     if(typeof document !== "undefined") {
         return document.location;
     }
     return new URL(routerCtx.staticURL || "");
+}
+
+const useRoute = () => {
+    const switchCtx = React.useContext(switchContext);
+    if(switchContext) {
+        return switchCtx.currRoute;
+    }
+    return null;
 }
 
 export {Router, Switch, Route, Link, Redirect, useRoute, useLocation}
