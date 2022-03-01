@@ -105,7 +105,7 @@ Source has been written to the dist/ folder!
                 return `<${type}${attrList.length > 0 ? " " : ""}${attrList.join(" ")}>${innerText || ""}</${type}>`
               }).join("\n"),
             result.appBody,
-            `<script src="` + clientScriptFileName + `" type="module"></script>`
+            `<script src="/` + clientScriptFileName + `" type="module"></script>`
           ),
         )
       }
