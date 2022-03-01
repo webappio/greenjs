@@ -149,7 +149,7 @@ const Head = ({children}) => {
         }
 
         gjsHeadState.tags[tag] = elements;
-        gjsHeadState.regenerateHead();
+        gjsHeadState.regenerateHead(ssrContext);
     }, [JSON.stringify(elements), tag]);
 
     if(ssrContext?.context && !ssrContext?.context?.headPromise) {

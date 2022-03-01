@@ -14,7 +14,7 @@ $ npm install -g greenjs
 $ greenjs COMMAND
 running command...
 $ greenjs (--version)
-greenjs/2.0.4 linux-x64 node-v16.13.2
+greenjs/2.0.5 linux-x64 node-v16.13.2
 $ greenjs --help [COMMAND]
 USAGE
   $ greenjs COMMAND
@@ -46,7 +46,7 @@ EXAMPLES
   Source has been written to the dist/ folder!
 ```
 
-_See code: [dist/commands/build.ts](https://github.com/ColinChartier/hello-world/blob/v2.0.4/dist/commands/build.ts)_
+_See code: [dist/commands/build.ts](https://github.com/ColinChartier/hello-world/blob/v2.0.5/dist/commands/build.ts)_
 
 ## `greenjs help [COMMAND]`
 
@@ -74,10 +74,11 @@ Start a development server for the project
 
 ```
 USAGE
-  $ greenjs start [-h <value>] [-u <value>]
+  $ greenjs start [-h <value>] [-p <value>] [-u <value>]
 
 FLAGS
   -h, --host=<value>           Which address to listen to
+  -p, --port=<value>           Which port to listen to
   -u, --upstream-addr=<value>  Where to forward upstream requests
 
 DESCRIPTION
@@ -95,5 +96,5 @@ EXAMPLES
     > Network: use `--host` to expose
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/ColinChartier/hello-world/blob/v2.0.4/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/ColinChartier/hello-world/blob/v2.0.5/dist/commands/start.ts)_
 <!-- commandsstop -->

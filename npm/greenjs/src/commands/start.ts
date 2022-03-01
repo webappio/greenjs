@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import GreenJSEntryPlugin from "../greenjs-entry-plugin";
 import {GenerateEntryServer} from "../resources";
 import {routeMatches} from "../routeMatches";
+import {access} from "fs";
 
 
 export default class Start extends Command {
@@ -53,6 +54,11 @@ Pre-bundling dependencies:
       return false;
     };
 
+    let configAccessErr = await new Promise(resolve => access("greenjs.config.js", err => err ? resolve(err) : resolve(null)));
+
+    if(configAccessErr) {
+      this.log("Configuration file at greenjs.config.js does not exist. Using default configuration.");
+    }
     const server = await createServer({
       plugins: [
         react(),
@@ -63,6 +69,7 @@ Pre-bundling dependencies:
         host: flags.host,
         port: flags.port,
       },
+      configFile: !configAccessErr ? "greenjs.config.js" : false,
     });
     (async () => {
       const {render} = await server.ssrLoadModule("/@greenjs-entry-server.jsx");
@@ -77,7 +84,12 @@ Pre-bundling dependencies:
         await render("http://localhost" + route, ctx);
         Object.keys(ctx.routes).forEach(x => knownRoutes.add(x));
       }
-    })().catch(x => console.error(x));
+    })().catch(x => {
+      console.error("Error finding routes: " + x)
+      if(x.stack) {
+        console.error(x.stack);
+      }
+    });
     await server.listen();
     server.printUrls();
   }
