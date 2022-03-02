@@ -14,7 +14,7 @@ $ npm install -g greenjs
 $ greenjs COMMAND
 running command...
 $ greenjs (--version)
-greenjs/2.0.7 linux-x64 node-v16.13.2
+greenjs/2.0.9 linux-x64 node-v16.13.2
 $ greenjs --help [COMMAND]
 USAGE
   $ greenjs COMMAND
@@ -46,7 +46,7 @@ EXAMPLES
   Source has been written to the dist/ folder!
 ```
 
-_See code: [dist/commands/build.ts](https://github.com/ColinChartier/hello-world/blob/v2.0.7/dist/commands/build.ts)_
+_See code: [dist/commands/build.ts](https://github.com/ColinChartier/hello-world/blob/v2.0.9/dist/commands/build.ts)_
 
 ## `greenjs help [COMMAND]`
 
@@ -96,5 +96,5 @@ EXAMPLES
     > Network: use `--host` to expose
 ```
 
-_See code: [dist/commands/start.ts](https://github.com/ColinChartier/hello-world/blob/v2.0.7/dist/commands/start.ts)_
+_See code: [dist/commands/start.ts](https://github.com/ColinChartier/hello-world/blob/v2.0.9/dist/commands/start.ts)_
 <!-- commandsstop -->

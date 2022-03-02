@@ -93,7 +93,7 @@ Source has been written to the dist/ folder!
         await Build.writeFile(
           path.join("dist", filename),
           generatedIndex
-            .replace(/<div id="app"><\/div>/g, result.appBody)
+            .replace(/<div id="app"><\/div>/g, `<div id="app">`+result.appBody+`</div>`)
             .replace(/<\/head>/g, result.headTags.map(
               ({type, attrs, innerText}) => {
                 let attrList = Object.keys(attrs ?? {}).map(key => {
