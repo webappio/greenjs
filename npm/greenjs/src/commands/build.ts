@@ -70,7 +70,7 @@ Source has been written to the dist/ folder!
     });
   }
 
-  async renderAllPages(render: (path: string, ctx: object) => Promise<string>, clientScriptFileName: string) {
+  async renderAllPages(render: (path: string, ctx: object) => Promise<string>, generatedIndex: string) {
     const pathsSeen = new Set<string>();
     const pathsToExplore = new Set<string>();
     pathsToExplore.add("/");
@@ -92,8 +92,9 @@ Source has been written to the dist/ folder!
 
         await Build.writeFile(
           path.join("dist", filename),
-          GenerateIndex(
-            result.headTags.map(
+          generatedIndex
+            .replace(/<div id="app"><\/div>/g, result.appBody)
+            .replace(/<\/head>/g, result.headTags.map(
               ({type, attrs, innerText}) => {
                 let attrList = Object.keys(attrs ?? {}).map(key => {
                   if (typeof attrs[key] === "boolean") {
@@ -103,10 +104,8 @@ Source has been written to the dist/ folder!
                   }
                 });
                 return `<${type}${attrList.length > 0 ? " " : ""}${attrList.join(" ")}>${innerText || ""}</${type}>`
-              }).join("\n"),
-            result.appBody,
-            `<script src="/` + clientScriptFileName + `" type="module"></script>`
-          ),
+              }).join("\n") + "</head>"
+            )
         )
       }
     }
@@ -127,7 +126,7 @@ Source has been written to the dist/ folder!
           outDir: "dist",
           rollupOptions: {
             input: {
-              "client": "@greenjs-entry-client.jsx",
+              "client": "index.html",
             },
             output: {
               format: "esm",
@@ -153,17 +152,21 @@ Source has been written to the dist/ folder!
       })
     ]);
 
-    let clientScriptFileName: string;
+    let generatedIndex: string = "";
     if ("output" in clientResult) {
-      clientScriptFileName = clientResult.output[0].fileName;
-    } else {
+      let outputChunk = clientResult.output.find(x => x.type === "asset" && x.fileName === "index.html");
+      if(outputChunk && "source" in outputChunk && typeof outputChunk.source === "string") {
+        generatedIndex = outputChunk.source;
+      }
+    }
+    if(generatedIndex === "") {
       this.log("Internal error: Could not find output file name")
       process.exit(1);
     }
 
     // @ts-ignore
     const {render} = await import(path.resolve("server-build", "server.js"));
-    await this.renderAllPages(render, clientScriptFileName);
+    await this.renderAllPages(render, generatedIndex);
     await new Promise((resolve, reject) => rm("server-build",
       {recursive: true},
       err => err ? reject(err) : resolve(err)
