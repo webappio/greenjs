@@ -1,13 +1,11 @@
-import {Command, Flags} from '@oclif/core'
-import {createServer, ProxyOptions} from 'vite'
+import {createServer} from 'vite'
 import react from '@vitejs/plugin-react';
-import GreenJSEntryPlugin from "../greenjs-entry-plugin";
-import {GenerateEntryServer} from "../resources";
-import {routeMatches} from "../routeMatches";
+import GreenJSEntryPlugin from "../greenjs-entry-plugin.js";
+import {routeMatches} from "../routeMatches.js";
 import {access} from "fs";
 
 
-export default class Start extends Command {
+export default class Start {
   static description = 'Start a development server for the project'
 
   static examples = [
@@ -25,14 +23,12 @@ Pre-bundling dependencies:
 
   static args = []
 
-  static flags = {
-    host: Flags.string({char: 'h', description: 'Which address to listen to', required: false}),
-    port: Flags.integer({char: 'p', description: 'Which port to listen to', required: false}),
-    'upstream-addr': Flags.string({char: 'u', description: 'Where to forward upstream requests', required: false})
-  };
+  // static flags = {
+  //   'upstream-addr': Flags.string({char: 'u', description: 'Where to forward upstream requests', required: false})
+  // };
 
-  async run() {
-    const {args, flags} = await this.parse(Start)
+  async run(upstreamAddr: string) {
+    // const {args, flags} = await this.parse(Start)
     const knownRoutes = new Set<string>();
     const knownNotRoutes = new Set<string>();
     let checkKnownRoute: (route: string) => Promise<void> = async route => {};
@@ -57,18 +53,14 @@ Pre-bundling dependencies:
     let configAccessErr = await new Promise(resolve => access("greenjs.config.js", err => err ? resolve(err) : resolve(null)));
 
     if(configAccessErr) {
-      this.log("Configuration file at greenjs.config.js does not exist. Using default configuration.");
+      console.log("Configuration file at greenjs.config.js does not exist. Using default configuration.");
     }
     const server = await createServer({
       plugins: [
         react(),
-        GreenJSEntryPlugin(isKnownRoute, flags['upstream-addr']),
+        GreenJSEntryPlugin(isKnownRoute, upstreamAddr),
       ],
       publicDir: "dist",
-      server: {
-        host: flags.host,
-        port: flags.port,
-      },
       configFile: !configAccessErr ? "greenjs.config.js" : false,
     });
     (async () => {

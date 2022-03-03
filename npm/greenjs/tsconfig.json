@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "importHelpers": true,
-    "module": "commonjs",
+    "module": "es2020",
+    "moduleResolution": "Node",
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
-    "target": "es2019"
+    "target": "es2020",
+    "allowSyntheticDefaultImports": true,
   },
   "include": [
     "src/**/*"

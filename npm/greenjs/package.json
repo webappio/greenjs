@@ -1,66 +1,47 @@
 {
   "name": "greenjs",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "description": "GreenJS - Add React to existing sites",
   "author": "Colin Chartier",
   "bin": {
-    "greenjs": "./bin/run"
+    "greenjs": "./dist/index.js"
   },
   "homepage": "https://github.com/webappio/greenjs",
   "license": "MIT",
+  "type": "module",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "repository": "ColinChartier/hello-world",
   "files": [
-    "/bin",
     "/dist",
-    "/npm-shrinkwrap.json",
-    "/oclif.manifest.json"
+    "/npm-shrinkwrap.json"
   ],
   "dependencies": {
-    "@oclif/core": "^1",
-    "@oclif/plugin-help": "^5",
-    "@oclif/plugin-plugins": "^2.0.1",
     "@vitejs/plugin-react": "^1.2.0",
     "http-proxy-middleware": "^2.0.3",
+    "minimist": "^1.2.5",
     "vite": "^2.8.3"
   },
   "devDependencies": {
     "@types/babel__core": "^7.1.18",
     "@types/express": "^4.17.13",
     "@types/http-proxy": "^1.17.8",
+    "@types/minimist": "^1.2.2",
     "@types/node": "^16.9.4",
-    "chai": "^4",
     "eslint": "^7.32.0",
-    "eslint-config-oclif": "^4",
-    "eslint-config-oclif-typescript": "^1.0.2",
-    "globby": "^11",
-    "oclif": "^2",
     "shx": "^0.3.3",
     "ts-node": "^10.2.1",
     "tslib": "^2.3.1",
     "typescript": "^4.4.3"
   },
-  "oclif": {
-    "bin": "greenjs",
-    "dirname": "greenjs",
-    "commands": "./dist/commands",
-    "plugins": [
-      "@oclif/plugin-help"
-    ]
-  },
   "scripts": {
-    "build": "shx rm -rf dist && tsc -b",
+    "build": "shx rm -rf dist && tsc -b && chmod +x dist/index.js",
     "lint": "eslint . --ext .ts --config .eslintrc",
-    "postpack": "shx rm -f oclif.manifest.json",
-    "prepack": "npm run build && oclif manifest && oclif readme",
-    "version": "oclif readme && git add README.md"
+    "prepack": "npm run build"
   },
   "engines": {
     "node": ">=12.0.0"
   },
   "bugs": "https://github.com/ColinChartier/hello-world/issues",
-  "keywords": [
-    "oclif"
-  ],
   "types": "dist/index.d.ts"
 }

@@ -1,15 +1,8 @@
-import {Command, Flags} from '@oclif/core'
-
-// import vm from 'vm';
-// import {readFile} from 'fs';
-// import * as os from "os";
 import * as vite from 'vite';
 import react from "@vitejs/plugin-react";
 import {writeFile, rm, mkdir} from 'fs';
-import {GenerateIndex} from "../resources";
-import GreenJSEntryPlugin from "../greenjs-entry-plugin";
+import GreenJSEntryPlugin from "../greenjs-entry-plugin.js";
 import * as path from "path";
-import {rename} from "fs/promises";
 
 interface HeadTag {
   type: string,
@@ -24,7 +17,7 @@ interface RenderResult {
   headTags: HeadTag[];
 }
 
-export default class Build extends Command {
+export default class Build {
   static description = 'Make a production build of the project'
 
   static examples = [
@@ -33,9 +26,9 @@ Source has been written to the dist/ folder!
 `,
   ]
 
-  static flags = {
-    from: Flags.string({char: 'f', description: 'Whom is saying hello', required: false}),
-  }
+  // static flags = {
+  //   from: Flags.string({char: 'f', description: 'Whom is saying hello', required: false}),
+  // }
 
   static args = []
 
@@ -113,9 +106,8 @@ Source has been written to the dist/ folder!
   }
 
   async run() {
-    const {args, flags} = await this.parse(Build)
+    // const {args, flags} = await this.parse(Build)
 
-    this.log("Building...")
     const [clientResult, serverResult] = await Promise.all([
       vite.build({
         plugins: [
@@ -166,7 +158,7 @@ Source has been written to the dist/ folder!
       }
     }
     if(generatedIndex === "") {
-      this.log("Internal error: Could not find output file name")
+      console.error("Internal error: Could not find output file name")
       process.exit(1);
     }
 
@@ -178,6 +170,6 @@ Source has been written to the dist/ folder!
       err => err ? reject(err) : resolve(err)
     ));
 
-    this.log(`Source has been written to the dist/ folder!`)
+    console.log(`Source has been written to the dist/ folder!`)
   }
 }

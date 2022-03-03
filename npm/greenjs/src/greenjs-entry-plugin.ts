@@ -1,5 +1,5 @@
 import {CustomPluginOptions, LoadResult, ResolveIdResult, TransformResult, OutputOptions} from "rollup";
-import {GenerateEntryClient, GenerateEntryServer, GenerateIndex} from "./resources";
+import {GenerateEntryClient, GenerateEntryServer, GenerateIndex} from "./resources.js";
 import {PluginOption, send} from "vite";
 import {basename} from "path";
 import {createProxyMiddleware} from 'http-proxy-middleware';
