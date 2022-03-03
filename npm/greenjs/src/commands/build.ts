@@ -9,6 +9,7 @@ import {writeFile, rm, mkdir} from 'fs';
 import {GenerateIndex} from "../resources";
 import GreenJSEntryPlugin from "../greenjs-entry-plugin";
 import * as path from "path";
+import {rename} from "fs/promises";
 
 interface HeadTag {
   type: string,
@@ -147,6 +148,11 @@ Source has been written to the dist/ folder!
             input: {
               "server": "@greenjs-entry-server.jsx",
             },
+            output: {
+              format: "cjs",
+              chunkFileNames: chunkInfo => (chunkInfo.name || "")+".cjs",
+              entryFileNames: chunkInfo => (chunkInfo.name || "")+".cjs",
+            }
           },
         },
       })
@@ -165,7 +171,7 @@ Source has been written to the dist/ folder!
     }
 
     // @ts-ignore
-    const {render} = await import(path.resolve("server-build", "server.js"));
+    const {render} = await import(path.resolve("server-build", "server.cjs"));
     await this.renderAllPages(render, generatedIndex);
     await new Promise((resolve, reject) => rm("server-build",
       {recursive: true},
