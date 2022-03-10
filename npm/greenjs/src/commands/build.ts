@@ -1,6 +1,6 @@
 import * as vite from 'vite';
 import react from "@vitejs/plugin-react";
-import {writeFile, rm, mkdir} from 'fs';
+import {writeFile, rm, mkdir, access} from 'fs';
 import GreenJSEntryPlugin from "../greenjs-entry-plugin.js";
 import * as path from "path";
 
@@ -108,6 +108,11 @@ Source has been written to the dist/ folder!
   async run() {
     // const {args, flags} = await this.parse(Build)
 
+    let configAccessErr = await new Promise(resolve => access("greenjs.config.js", err => err ? resolve(err) : resolve(null)));
+
+    if(configAccessErr) {
+      console.log("Configuration file at greenjs.config.js does not exist. Using default configuration.");
+    }
     const [clientResult, serverResult] = await Promise.all([
       vite.build({
         plugins: [
@@ -125,7 +130,8 @@ Source has been written to the dist/ folder!
               format: "esm",
             }
           }
-        }
+        },
+        configFile: !configAccessErr ? "greenjs.config.js" : false,
       }),
       vite.build({
         plugins: [
@@ -147,6 +153,7 @@ Source has been written to the dist/ folder!
             }
           },
         },
+        configFile: !configAccessErr ? "greenjs.config.js" : false,
       })
     ]);
 
