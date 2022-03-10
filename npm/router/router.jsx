@@ -46,40 +46,35 @@ const getPathResult = (path, routePath) => {
     return result;
 }
 
-const RouteView = ({route, routePath}) => {
-    const [currContents, setCurrContents] = React.useState(null);
-    const [currRoutePath, setCurrRoutePath] = React.useState(null);
+const RouteView = React.memo(({route, routePath}) => {
+    const [page, setPage] = React.useState({Component: null, routePath: null});
     const {context} = useContext(routerContext);
 
     if(route?.props?.asyncPage) {
         if(context.asyncPages && context.asyncPages[routePath]) {
-            let Page = context.asyncPages[routePath];
-            if(currRoutePath !== routePath) {
-                setCurrContents(<Page />);
-                setCurrRoutePath(routePath);
+            let Component = context.asyncPages[routePath];
+            if(page.routePath !== routePath) {
+                setPage({Component, routePath});
             }
-            return <Page />;
+        } else if(!(routePath in (context.routePromises || {}))) {
+            let importPromise = new Promise(resolve => {
+                route?.props?.asyncPage().then(result => {
+                    context.asyncPages = {...(context.asyncPages || {}), [routePath]: result.default}
+                    setPage({Component: result.default, routePath});
+                    resolve(true);
+                })
+            });
+            context.routePromises = {...(context.routePromises || {}), [routePath]: importPromise};
         }
-        let importPromise = new Promise(resolve => {
-            route?.props?.asyncPage().then(page => {
-                context.asyncPages = {...(context.asyncPages || {}), [routePath]: page.default}
-                let Page = page.default;
-                setCurrContents(<Page />);
-                setCurrRoutePath(routePath);
-                resolve(true);
-            })
-        });
-        context.routePromises = {...(context.routePromises || {}), [routePath]: importPromise};
     } else {
-        if(currRoutePath !== routePath) {
-            setCurrContents(route);
-            setCurrRoutePath(routePath);
-        }
         return route;
     }
 
-    return currContents;
-}
+    if(page?.Component) {
+        return <page.Component />
+    }
+    return null;
+})
 
 const ensureHistoryPatched = () => {
     if(typeof window === "undefined") {

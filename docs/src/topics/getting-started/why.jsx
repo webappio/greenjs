@@ -1,6 +1,5 @@
 import React from "react";
 import {DocBase, DocCmd, DocLink} from "../base-doc-page";
-import "./test.css"
 
 export default function Page() {
     return <DocBase>
